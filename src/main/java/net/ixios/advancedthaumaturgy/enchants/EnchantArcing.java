@@ -1,6 +1,5 @@
 package net.ixios.advancedthaumaturgy.enchants;
 
-import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.misc.Utilities;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;

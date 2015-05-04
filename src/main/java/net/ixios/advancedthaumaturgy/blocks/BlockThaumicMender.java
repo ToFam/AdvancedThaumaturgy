@@ -11,15 +11,14 @@ import net.minecraft.world.World;
 
 public class BlockThaumicMender extends BlockContainer
 {
-
-	protected BlockThaumicMender(int id)
+	protected BlockThaumicMender()
 	{
-		super(id, Material.rock);
+		super(Material.rock);
 		this.setCreativeTab(AdvThaum.tabAdvThaum);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) 
+	public TileEntity createNewTileEntity(World world, int i) 
 	{
 		return null;
 	}
@@ -31,7 +30,7 @@ public class BlockThaumicMender extends BlockContainer
 		if (world.isRemote)
 			return true;
 		
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 		
 		if (!(te instanceof TileThaumicMender))
 			return true;
@@ -50,12 +49,9 @@ public class BlockThaumicMender extends BlockContainer
 		 if(player.getCurrentEquippedItem() != null)
         {
             ItemStack i = player.getCurrentEquippedItem().copy();
+            player.inventory.decrStackSize(0, 1);
             i.stackSize = 1;
             tm.setInventorySlotContents(0, i);
-            player.getCurrentEquippedItem().stackSize--;
-            if(player.getCurrentEquippedItem().stackSize == 0)
-                player.setCurrentItemOrArmor(0, null);
-            player.inventory.onInventoryChanged();
             world.markBlockForUpdate(x, y, z);
             world.playSoundEffect(x, y, z, "random.pop", 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 1.6F);
             return true;

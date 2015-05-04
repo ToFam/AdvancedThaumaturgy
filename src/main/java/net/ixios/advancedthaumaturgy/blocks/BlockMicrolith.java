@@ -1,77 +1,58 @@
 package net.ixios.advancedthaumaturgy.blocks;
 
-import java.awt.Color;
 import java.util.List;
 
-import com.google.common.collect.SetMultimap;
-
-import thaumcraft.api.ThaumcraftApi;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.aspects.IEssentiaContainerItem;
-import thaumcraft.api.crafting.InfusionRecipe;
-import thaumcraft.api.crafting.ShapedArcaneRecipe;
-import thaumcraft.api.research.ResearchPage;
-import thaumcraft.common.config.ConfigItems;
-import thaumcraft.common.config.ConfigResearch;
-import thaumcraft.common.items.ItemEssence;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import mcp.mobius.waila.api.IWailaBlock;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.items.ItemMercurialRod;
 import net.ixios.advancedthaumaturgy.items.ItemMicrolith;
 import net.ixios.advancedthaumaturgy.items.TCItems;
 import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
-import net.ixios.advancedthaumaturgy.tileentities.TileMicrolithBase;
-import net.ixios.advancedthaumaturgy.tileentities.TileNodeModifier;
-import net.ixios.advancedthaumaturgy.tileentities.TileThaumicFertilizer;
 import net.ixios.advancedthaumaturgy.tileentities.TileFluxDissipator;
+import net.ixios.advancedthaumaturgy.tileentities.TileMicrolithBase;
 import net.ixios.advancedthaumaturgy.tileentities.TileWatchfulMicrolith;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import thaumcraft.api.ThaumcraftApi;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.crafting.ShapedArcaneRecipe;
+import thaumcraft.api.research.ResearchPage;
+import thaumcraft.common.config.ConfigResearch;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockMicrolith extends BlockContainer implements IWailaBlock
 {
-
-	public static int blockID;
 	public static int renderID;
 	
-    public BlockMicrolith(int id, Material material)
+    public BlockMicrolith(Material material)
     {
-        super(id, material);
+    	super(material);
         renderID = RenderingRegistry.getNextAvailableRenderId();
-        blockID = id;
         this.setCreativeTab(AdvThaum.tabAdvThaum);
         this.setHardness(1.0f);
         
     }
 
-    @Override
-    public void getSubBlocks(int dunno, CreativeTabs tab, List list)
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+    public void getSubBlocks(Item i, CreativeTabs tab, List list)
     {
     	list.add(new ItemStack(this, 1, 1)); // flux dissipator
     	list.add(new ItemStack(this, 1, 2)); // chunk loader
     	//list.add(new ItemStack(this, 1, 3)); // burning
-    	list.add(new ItemStack(this, 1, 10)); // excavator
+    	list.add(new ItemStack(this, 1, 10));// excavator
     }
     
 	 @Override
@@ -192,14 +173,13 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
  	}
  	
      @Override
-     public TileEntity createNewTileEntity(World world)
+     public TileEntity createNewTileEntity(World world, int i)
      {
     	 return null;
      }
 	
- 	@SideOnly(Side.CLIENT)
  	@Override
- 	public void registerIcons(IconRegister ir)
+ 	public void registerBlockIcons(IIconRegister ir)
  	{
  		blockIcon = ir.registerIcon("minecraft:obsidian");
  	}
@@ -226,19 +206,16 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
 	        float hitY, float hitZ)
 	{
-		TileEntity te = world.getBlockTileEntity(x, y, z);
-		player.addChatMessage("Ze metadata eez: " + world.getBlockMetadata(x, y, z));
+		TileEntity te = world.getTileEntity(x, y, z);
 		if (te == null)
 			return super.onBlockActivated(world, x, y, z, player, side, hitX, hitY, hitZ);
 		
 		TileMicrolithBase base = (TileMicrolithBase)te;
-		
 		return base.onBlockActivated(world, x, y, z, player, side, hitX, hitY, hitZ);
-	    	
 	}
 
 	@Override
-	public float getBlockBrightness(IBlockAccess ba, int x, int y, int z)
+	public int getMixedBrightnessForBlock(IBlockAccess ba, int x, int y, int z)
 	{
 	    return 12;
 	}

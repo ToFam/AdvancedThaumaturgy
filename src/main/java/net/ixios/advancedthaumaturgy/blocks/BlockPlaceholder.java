@@ -3,22 +3,21 @@ package net.ixios.advancedthaumaturgy.blocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 public class BlockPlaceholder extends Block implements ITileEntityProvider
 {
@@ -26,10 +25,9 @@ public class BlockPlaceholder extends Block implements ITileEntityProvider
 	public static int blockID;
 	public final int renderID;
 	
-	public BlockPlaceholder(int id, Material material)
+	public BlockPlaceholder(Material material)
 	{
-		super(id, Material.air);
-		blockID = id;
+		super(material);
 		renderID = RenderingRegistry.getNextAvailableRenderId();
 	}
 
@@ -40,7 +38,7 @@ public class BlockPlaceholder extends Block implements ITileEntityProvider
 	}
 	
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int i)
 	{
 		return null;
 	}
@@ -59,7 +57,7 @@ public class BlockPlaceholder extends Block implements ITileEntityProvider
 	}
 	
 	@Override
-	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int metadata, int fortune)
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune)
 	{
 	    return new ArrayList<ItemStack>();
 	}
@@ -90,7 +88,7 @@ public class BlockPlaceholder extends Block implements ITileEntityProvider
     }
     
     @Override
-    public void registerIcons(IconRegister ir)
+    public void registerBlockIcons(IIconRegister ir)
     {
 	     blockIcon = ir.registerIcon("thaumcraft:assets/thaumcraft/textures/aspects/_unknown.png");
     }

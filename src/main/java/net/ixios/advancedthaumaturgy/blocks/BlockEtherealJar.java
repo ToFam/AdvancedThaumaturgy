@@ -1,16 +1,25 @@
 package net.ixios.advancedthaumaturgy.blocks;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.ixios.advancedthaumaturgy.AdvThaum;
+import net.ixios.advancedthaumaturgy.items.TCItems;
+import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
+import net.ixios.advancedthaumaturgy.tileentities.TileEtherealJar;
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IEssentiaContainerItem;
-import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.common.blocks.BlockJar;
@@ -19,46 +28,11 @@ import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.config.ConfigItems;
 import thaumcraft.common.config.ConfigResearch;
 import thaumcraft.common.items.ItemEssence;
-import thaumcraft.common.items.ItemResearchNotes;
 import thaumcraft.common.items.ItemResource;
-import thaumcraft.common.tiles.TileJarFillable;
-import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.items.ItemEtherealJar;
-import net.ixios.advancedthaumaturgy.items.TCItems;
-import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
-import net.ixios.advancedthaumaturgy.tileentities.TileEtherealJar;
-import net.ixios.advancedthaumaturgy.tileentities.TileFluxDissipator;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockEtherealJar extends BlockJar
-{
-    
-	public static int blockID;
-	
-    public BlockEtherealJar(int id)
-    {
-        super(id);
-        blockID = id;
-        //this.setCreativeTab(AdvThaum.tabAdvThaum);
-        this.setUnlocalizedName("at.etherealjar");
-    }
-
-    @Override
-    public void getSubBlocks(int blockid, CreativeTabs tab, List list) 
-    {
-    	// don't show in creative menu
-    }
-    
+{   
     @Override
     public TileEntity createTileEntity(World world, int metadata)
     {
@@ -107,17 +81,17 @@ public class BlockEtherealJar extends BlockJar
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
 	        float hitY, float hitZ)
 	{
-    	TileEntity te = world.getBlockTileEntity(x, y, z);
+    	TileEntity te = world.getTileEntity(x, y, z);
         ItemStack helditem = player.getHeldItem();
         
         if (!(te instanceof TileEtherealJar))
     		return true;
 
-    	TileEtherealJar jar = (TileEtherealJar)te;;
+    	TileEtherealJar jar = (TileEtherealJar)te;
     		
     	boolean noitem = (helditem == null);
-    	boolean isLabel = !noitem && helditem.itemID == ConfigItems.itemResource.itemID && helditem.getItemDamage() == 13;
-    	boolean isPhial = !noitem && helditem.getItem() instanceof IEssentiaContainerItem; //itemID == ConfigItems.itemResource.itemID && helditem.getItemDamage() == 13;
+    	boolean isLabel = !noitem && helditem.isItemEqual(new ItemStack(ConfigItems.itemResource)) && helditem.getItemDamage() == 13;
+    	boolean isPhial = !noitem && helditem.getItem() instanceof IEssentiaContainerItem;
 
     	if (noitem)
     		handleEmptyHandClick(jar, player, side);
@@ -135,31 +109,31 @@ public class BlockEtherealJar extends BlockJar
     	if (player.isSneaking() && jar.aspectFilter != null && side == jar.facing)
     	{ // shift right clicking a label, remove it
     		jar.aspectFilter = null;
-          	if (jar.worldObj.isRemote) 
+          	if (jar.getWorldObj().isRemote) 
           	{
-          		jar.worldObj.playSound(jar.xCoord + 0.5F, jar.yCoord + 0.5F, jar.zCoord + 0.5F, "thaumcraft:page", 1.0F, 1.0F, false);
+          		jar.getWorldObj().playSound(jar.xCoord + 0.5F, jar.yCoord + 0.5F, jar.zCoord + 0.5F, "thaumcraft:page", 1.0F, 1.0F, false);
           	}
           	else
           	{
           		ForgeDirection fd = ForgeDirection.getOrientation(side);
-          		jar.worldObj.spawnEntityInWorld(new EntityItem(jar.worldObj, jar.xCoord + 0.5F + fd.offsetX / 3.0F, jar.yCoord + 0.5F, jar.zCoord + 0.5F + fd.offsetZ / 3.0F, new ItemStack(ConfigItems.itemResource, 1, 13)));
+          		jar.getWorldObj().spawnEntityInWorld(new EntityItem(jar.getWorldObj(), jar.xCoord + 0.5F + fd.offsetX / 3.0F, jar.yCoord + 0.5F, jar.zCoord + 0.5F + fd.offsetZ / 3.0F, new ItemStack(ConfigItems.itemResource, 1, 13)));
           	}
           
     	}
     	else if (player.isSneaking())
     	{// shift right clickign a jar, empty it
     		jar.amount = 0;
-    		if (jar.worldObj.isRemote) 
+    		if (jar.getWorldObj().isRemote) 
     		{
-    			jar.worldObj.playSound(jar.xCoord + 0.5F, jar.yCoord + 0.5F, jar.zCoord + 0.5F, "thaumcraft:jar", 0.4F, 1.0F, false);
-    			jar.worldObj.playSound(jar.xCoord + 0.5F, jar.yCoord + 0.5F, jar.zCoord + 0.5F, "liquid.swim", 0.5F, 1.0F + jar.worldObj.rand.nextFloat() - jar.worldObj.rand.nextFloat() * 0.3F, false);
+    			jar.getWorldObj().playSound(jar.xCoord + 0.5F, jar.yCoord + 0.5F, jar.zCoord + 0.5F, "thaumcraft:jar", 0.4F, 1.0F, false);
+    			jar.getWorldObj().playSound(jar.xCoord + 0.5F, jar.yCoord + 0.5F, jar.zCoord + 0.5F, "liquid.swim", 0.5F, 1.0F + jar.getWorldObj().rand.nextFloat() - jar.getWorldObj().rand.nextFloat() * 0.3F, false);
     		}
     	}
     }
         
     private void handleLabelClick(TileEtherealJar jar, EntityPlayer player, ItemStack stack)
     {
-    	World world = jar.worldObj;
+    	World world = jar.getWorldObj();
     	ItemResource label = (ItemResource)stack.getItem();
     	
     	if (jar.amount == 0 && label.getAspects(stack) != null && jar.aspectFilter == null)
@@ -188,7 +162,7 @@ public class BlockEtherealJar extends BlockJar
     {
     	IEssentiaContainerItem container = (IEssentiaContainerItem)stack.getItem();
     	AspectList aspects = container.getAspects(stack);
-    	World world = jar.worldObj;
+    	World world = jar.getWorldObj();
     	Aspect aspect = aspects == null ? null : container.getAspects(stack).getAspects()[0];
     	
         if (jar.amount >= 8 && jar.aspect != null && container.getAspects(stack) == null && aspects == null)
@@ -230,15 +204,15 @@ public class BlockEtherealJar extends BlockJar
     }
     
     @Override
-    public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int meta, int fortune)
+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int meta, int fortune)
     {
         return new ArrayList<ItemStack>();
     }
     
     @Override
-    public void breakBlock(World world, int x, int y, int z, int arg4, int arg5)
+    public void breakBlock(World world, int x, int y, int z, Block block, int arg5)
     {
-    	TileEntity te = world.getBlockTileEntity(x, y, z);
+    	TileEntity te = world.getTileEntity(x, y, z);
         TileEtherealJar ej = (TileEtherealJar)te;
          
         ItemStack drop = new ItemStack(AdvThaum.itemEtherealJar);
@@ -246,20 +220,20 @@ public class BlockEtherealJar extends BlockJar
         if (ej.amount > 0)
             ((ItemJarFilled)drop.getItem()).setAspects(drop, (new AspectList()).add(ej.aspect, ej.amount));
         if (!drop.hasTagCompound())
-            drop.setTagCompound(new NBTTagCompound("tag"));
+            drop.setTagCompound(new NBTTagCompound());
         if (ej.aspectFilter != null)
         	drop.stackTagCompound.setString("AspectFilter", ej.aspectFilter.getTag());
         
-        dropBlockAsItem_do(world, x, y, z, drop);
+        dropBlockAsItem(world, x, y, z, drop);
 
-        world.removeBlockTileEntity(x, y, z);
+        world.removeTileEntity(x, y, z);
          
     }
    
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack)
     {
-    	TileEntity te = world.getBlockTileEntity(x, y, z);
+    	TileEntity te = world.getTileEntity(x, y, z);
     	
     	TileEtherealJar ej = (TileEtherealJar)te; 
     	

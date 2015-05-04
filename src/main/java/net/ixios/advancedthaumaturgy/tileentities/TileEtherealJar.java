@@ -1,8 +1,6 @@
 package net.ixios.advancedthaumaturgy.tileentities;
 
-import net.minecraftforge.common.ForgeDirection;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
+import net.minecraftforge.common.util.ForgeDirection;
 import thaumcraft.common.tiles.TileJarFillable;
 
 public class TileEtherealJar extends TileJarFillable 

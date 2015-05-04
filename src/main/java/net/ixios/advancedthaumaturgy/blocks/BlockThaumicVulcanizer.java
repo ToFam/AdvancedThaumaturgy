@@ -3,10 +3,12 @@ package net.ixios.advancedthaumaturgy.blocks;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.tileentities.TilePlaceholder;
 import net.ixios.advancedthaumaturgy.tileentities.TileVulcanizer;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -17,16 +19,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockThaumicVulcanizer extends BlockContainer
 {
-	
 	public final int renderID;
-	public static int blockID;
 	
-	public BlockThaumicVulcanizer(int id, Material material)
+	public BlockThaumicVulcanizer(Material material)
 	{
-		super(id, material);
-		blockID = id;
+		super(material);
 		this.setCreativeTab(AdvThaum.tabAdvThaum);
-		this.setUnlocalizedName("at.vulcanizer");
 	    renderID = RenderingRegistry.getNextAvailableRenderId();
 	}
 
@@ -61,7 +59,7 @@ public class BlockThaumicVulcanizer extends BlockContainer
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void registerIcons(IconRegister ir)
+	public void registerBlockIcons(IIconRegister ir)
 	{
 		blockIcon = ir.registerIcon("advancedthaumaturgy:node_modifier");
 	}
@@ -95,8 +93,8 @@ public class BlockThaumicVulcanizer extends BlockContainer
     	{
     		for (int zc = z - 1; zc <= z + 1; zc++)
     		{
-    			int id = world.getBlockId(xc, y, zc);
-    			if (id != 0 && id != BlockThaumicVulcanizer.blockID)
+    			Block b = world.getBlock(xc, y, zc);
+    			if (b != Blocks.air && b != this)
     				return;
     		}
     	}
@@ -108,9 +106,9 @@ public class BlockThaumicVulcanizer extends BlockContainer
     			// set all but the middle block to 'fake' air
     			if (!(xc == x && zc == z))
     			{
-    				world.setBlock(xc, y, zc, BlockPlaceholder.blockID);
+    				world.setBlock(xc, y, zc, new BlockPlaceholder(Material.air));
     				TilePlaceholder te = new TilePlaceholder();
-    				world.setBlockTileEntity(xc, y, zc, te);
+    				world.setTileEntity(xc, y, zc, te);
     			}
     		}
     	}
@@ -126,7 +124,7 @@ public class BlockThaumicVulcanizer extends BlockContainer
     		{
     			if (!(xc == x && zc == z))
     			{
-    				TilePlaceholder te = (TilePlaceholder)world.getBlockTileEntity(xc, y, zc);
+    				TilePlaceholder te = (TilePlaceholder)world.getTileEntity(xc, y, zc);
     			}
     		}
     	}
@@ -144,7 +142,7 @@ public class BlockThaumicVulcanizer extends BlockContainer
     }
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world, int i) {
 		// TODO Auto-generated method stub
 		return null;
 	}

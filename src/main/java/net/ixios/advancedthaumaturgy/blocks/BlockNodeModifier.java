@@ -1,27 +1,8 @@
 package net.ixios.advancedthaumaturgy.blocks;
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import thaumcraft.api.ThaumcraftApi;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.crafting.InfusionRecipe;
-import thaumcraft.api.nodes.NodeModifier;
-import thaumcraft.api.nodes.NodeType;
-import thaumcraft.api.research.ResearchPage;
-import thaumcraft.api.wands.IWandable;
-import thaumcraft.common.blocks.BlockJar;
-import thaumcraft.common.blocks.BlockJarItem;
-import thaumcraft.common.blocks.ItemJarNode;
-import thaumcraft.common.config.ConfigBlocks;
-import thaumcraft.common.config.ConfigItems;
-import thaumcraft.common.config.ConfigResearch;
-import thaumcraft.common.tiles.TileJarNode;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.items.ItemNodeModifier;
 import net.ixios.advancedthaumaturgy.items.TCItems;
@@ -31,24 +12,38 @@ import net.ixios.advancedthaumaturgy.tileentities.TileNodeModifier.Operation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import thaumcraft.api.ThaumcraftApi;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.crafting.InfusionRecipe;
+import thaumcraft.api.nodes.NodeModifier;
+import thaumcraft.api.nodes.NodeType;
+import thaumcraft.api.research.ResearchPage;
+import thaumcraft.api.wands.IWandable;
+import thaumcraft.common.blocks.ItemJarNode;
+import thaumcraft.common.config.ConfigBlocks;
+import thaumcraft.common.config.ConfigItems;
+import thaumcraft.common.config.ConfigResearch;
+import thaumcraft.common.tiles.TileJarNode;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockNodeModifier extends BlockContainer implements IWandable
 {
-
 	public final int renderID;
-	public static int blockID;
 	
-	public BlockNodeModifier(int id, Material material)
+	public BlockNodeModifier(Material material)
 	{
-		super(id, material);
-		blockID = id;
+		super(material);
 		this.setHardness(1.0F);
-		this.setUnlocalizedName("at.modifier");
 	    renderID = RenderingRegistry.getNextAvailableRenderId();
 	}
 
@@ -58,64 +53,65 @@ public class BlockNodeModifier extends BlockContainer implements IWandable
 		GameRegistry.registerTileEntity(TileNodeModifier.class, "tileentityNodeModifier");
 		this.setCreativeTab(AdvThaum.tabAdvThaum);
 		
-		ItemStack gold = new ItemStack(Block.blockGold);
+		ItemStack gold = new ItemStack(Blocks.gold_block);
 		ItemStack wood = new ItemStack(ConfigBlocks.blockMagicalLog, 1, 0);
 		ItemStack essence = new ItemStack(ConfigItems.itemWispEssence, 1, 32767);
 		ItemStack pedestal = new ItemStack(ConfigBlocks.blockStoneDevice, 2, 1);
 			
-		 InfusionRecipe recipe = ThaumcraftApi.addInfusionCraftingRecipe("NODEMODIFIER", new ItemStack(this), 5,
+		InfusionRecipe recipe = ThaumcraftApi.addInfusionCraftingRecipe("NODEMODIFIER", new ItemStack(this), 5,
 	                (new AspectList()).add(Aspect.GREED, 64).add(Aspect.AURA, 128).add(Aspect.MAGIC, 256).add(Aspect.TREE, 256),
 	                pedestal,
 	                new ItemStack[] { wood, essence, gold, essence, wood, essence, gold, essence });
 	        
 	        
-		 ConfigResearch.recipes.put("NodeModifier", recipe);
+		ConfigResearch.recipes.put("NodeModifier", recipe);
 	       
-		 ItemStack empty = new ItemStack(ConfigBlocks.blockHole, 1, 15);
+		ItemStack empty = new ItemStack(ConfigBlocks.blockHole, 1, 15);
 		 
-		 ConfigResearch.recipes.put("NodeSetup", Arrays.asList(new Object[] {
+		ConfigResearch.recipes.put("NodeSetup", Arrays.asList(new Object[] {
 		            new AspectList(),
 		            Integer.valueOf(2), Integer.valueOf(1), Integer.valueOf(5),
 		            Arrays.asList(new ItemStack[] {
 		            empty, TCItems.arcanepedestal, TCItems.arcanepedestal, empty, empty, new ItemStack(this),
 		            TCItems.arcanepedestal, empty, empty, TCItems.arcanepedestal, empty, empty }) }));
 		                        
-		 List list = (List)ConfigResearch.recipes.get("NodeSetup");
+		@SuppressWarnings("rawtypes")
+		List list = (List)ConfigResearch.recipes.get("NodeSetup");
 		 
-		 ATResearchItem ri = new ATResearchItem("NODEMODIFIER", "BASICS",
+		ATResearchItem ri = new ATResearchItem("NODEMODIFIER", "BASICS",
 					(new AspectList().add(Aspect.AURA, 16)),
 					-5, 6, 4,
 					new ItemStack(this));
-			ri.setTitle("at.research.nodemodifier.title");
-			ri.setInfo("at.research.nodemodifier.desc");
-			ri.setParents("NODEJAR", "INFUSION");
-			ri.setPages(new ResearchPage("at.research.nodemodifier.pg1"),
-					new ResearchPage("at.research.nodemodifier.pg2"), new ResearchPage(recipe), new ResearchPage(list));
-			ri.setConcealed();
-			ri.setSpecial();
-			
-			ri.registerResearchItem();
+		ri.setTitle("at.research.nodemodifier.title");
+		ri.setInfo("at.research.nodemodifier.desc");
+		ri.setParents("NODEJAR", "INFUSION");
+		ri.setPages(new ResearchPage("at.research.nodemodifier.pg1"),
+				new ResearchPage("at.research.nodemodifier.pg2"), new ResearchPage(recipe), new ResearchPage(list));
+		ri.setConcealed();
+		ri.setSpecial();
+		
+		ri.registerResearchItem();
 			
 	}
 	
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int blockid)
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
 	{
-		super.onNeighborBlockChange(world, x, y, z, blockid);
-		int id = world.getBlockId(x,  y + 1,  z);
-		int jarid = ConfigBlocks.blockJar.blockID;
+		super.onNeighborBlockChange(world, x, y, z, block);
+		Block above = world.getBlock(x,  y + 1,  z);
 		
-		if ((blockid == jarid) && id == 0)
-			((TileNodeModifier)world.getBlockTileEntity(x,  y,  z)).cancel();
+		// if the jar was removed, cancel
+		if ((block.equals(ConfigBlocks.blockJar)) && above.equals(Blocks.air))
+			((TileNodeModifier)world.getTileEntity(x,  y,  z)).cancel();
 	}
 	
 	public static int refreshAvailableOperations(World world, int x, int y, int z)
 	{
-		TileEntity te = world.getBlockTileEntity(x,  y + 1,  z);
+		TileEntity te = world.getTileEntity(x,  y + 1,  z);
 		if (!(te instanceof TileJarNode))
 			return 0;
 		TileJarNode jar = (TileJarNode)te;
-		TileNodeModifier nm = (TileNodeModifier)world.getBlockTileEntity(x, y, z);
+		TileNodeModifier nm = (TileNodeModifier)world.getTileEntity(x, y, z);
 		
 		nm.availableOperations.clear();
 		
@@ -200,8 +196,8 @@ public class BlockNodeModifier extends BlockContainer implements IWandable
 		 if (!world.isRemote)
 		 {
 			 ItemStack helditem = player.getHeldItem();
-			 int blockid = world.getBlockId(x, y + 1, z);
-			 if (helditem != null && (helditem.getItem() instanceof ItemJarNode) && blockid == 0)
+			 Block above = world.getBlock(x, y + 1, z);
+			 if (helditem != null && (helditem.getItem() instanceof ItemJarNode) && above.equals(Blocks.air))
 			 {
 				return false;
 			 }
@@ -222,7 +218,7 @@ public class BlockNodeModifier extends BlockContainer implements IWandable
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void registerIcons(IconRegister ir)
+	public void registerBlockIcons(IIconRegister ir)
 	{
 		blockIcon = ir.registerIcon("advthaum:node_modifier");
 	}
@@ -246,8 +242,8 @@ public class BlockNodeModifier extends BlockContainer implements IWandable
             int x, int y, int z, int arg6, int arg7)
     {
 
-        TileEntity target = world.getBlockTileEntity(x,  y + 1, z);
-        TileNodeModifier nm = (TileNodeModifier)world.getBlockTileEntity(x, y, z);
+        TileEntity target = world.getTileEntity(x,  y + 1, z);
+        TileNodeModifier nm = (TileNodeModifier)world.getTileEntity(x, y, z);
         
         if (!(target instanceof TileJarNode))
         {
@@ -256,12 +252,12 @@ public class BlockNodeModifier extends BlockContainer implements IWandable
             return 0;
         }
         
-        TileNodeModifier ni = (TileNodeModifier)world.getBlockTileEntity(x, y, z);
+        TileNodeModifier ni = (TileNodeModifier)world.getTileEntity(x, y, z);
         
         if (ni.isActive())
             return 0;
         
-        world.scheduleBlockUpdate(x, y, z, BlockNodeModifier.blockID, 1);
+        world.scheduleBlockUpdate(x, y, z, this, 1);
 
         return 0;
     }
@@ -275,7 +271,7 @@ public class BlockNodeModifier extends BlockContainer implements IWandable
     }
 
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int i)
 	{
 		return null;
 	}
