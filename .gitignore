@@ -1,0 +1,13 @@
+# exclude all
+/*
+
+!.gitignore
+!README.md
+!src/
+
+# gradle stuff
+!gradle/
+!gradlew
+!gradlew.bat
+!build.gradle
+!gradle.properties
