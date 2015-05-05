@@ -2,21 +2,11 @@ package net.ixios.advancedthaumaturgy.gui;
 
 import java.awt.Color;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.Rectangle;
-
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.client.lib.UtilsFX;
-import thaumcraft.common.config.ConfigItems;
-import thaumcraft.common.items.ItemWispEssence;
-import thaumcraft.common.tiles.TileJarNode;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.blocks.BlockNodeModifier;
 import net.ixios.advancedthaumaturgy.tileentities.TileNodeModifier;
 import net.ixios.advancedthaumaturgy.tileentities.TileNodeModifier.Operation;
 import net.ixios.advancedthaumaturgy.tileentities.TileNodeModifier.Requirements;
-import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -27,7 +17,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Rectangle;
 
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.client.lib.UtilsFX;
+import thaumcraft.common.config.ConfigItems;
+import thaumcraft.common.items.ItemWispEssence;
+import thaumcraft.common.tiles.TileJarNode;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -64,7 +62,7 @@ public class GuiNodeModifier extends GuiContainer
 		if (node == null)
 			node = new ItemStack(AdvThaum.CreativeNode);
 		
-		nm = (TileNodeModifier)world.getBlockTileEntity(blockX, blockY, blockZ);
+		nm = (TileNodeModifier)world.getTileEntity(blockX, blockY, blockZ);
 		
 		BlockNodeModifier.refreshAvailableOperations(world, x, y, z);
 	}
@@ -73,7 +71,7 @@ public class GuiNodeModifier extends GuiContainer
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
 	{
 		drawTexture(texture, guiLeft, guiTop, xSize, ySize, 1f, 0.75f);
-		if (!(((TileNodeModifier)(world.getBlockTileEntity(blockX,  blockY,  blockZ))).isActive()))
+		if (!(((TileNodeModifier)(world.getTileEntity(blockX,  blockY,  blockZ))).isActive()))
 			drawButton();
 	}
  
@@ -115,16 +113,16 @@ public class GuiNodeModifier extends GuiContainer
 		if (nm == null)
 			return;
 		
-		TileEntity te = world.getBlockTileEntity(blockX, blockY + 1, blockZ);
+		TileEntity te = world.getTileEntity(blockX, blockY + 1, blockZ);
 		
 		if (te == null)
 		{
-			fontRenderer.drawSplitString("Begin modification by placing a jarred node on the Node Modifier.", 5, 5, 150, Color.WHITE.getRGB());
+			fontRendererObj.drawSplitString("Begin modification by placing a jarred node on the Node Modifier.", 5, 5, 150, Color.WHITE.getRGB());
 			return;
 		}
 		else if (!(te instanceof TileJarNode))
 		{
-			fontRenderer.drawSplitString("Invalid modification target.  Begin modification by placing a jarred node on the Node Modifier.", 20, ySize - 45, xSize - 30, Color.WHITE.getRGB());
+			fontRendererObj.drawSplitString("Invalid modification target.  Begin modification by placing a jarred node on the Node Modifier.", 20, ySize - 45, xSize - 30, Color.WHITE.getRGB());
 			return;
 		}
 		
@@ -133,7 +131,7 @@ public class GuiNodeModifier extends GuiContainer
 			for (int i = 0; i < nm.availableOperations.size(); i++)
 			{
 				Operation op = nm.availableOperations.get(i);
-				drawString(fontRenderer,  (i == selectedop ? "\u00a7n" : "") + op.toString(), 20, 15 + (i * 12), Color.WHITE.getRGB());
+				drawString(fontRendererObj,  (i == selectedop ? "\u00a7n" : "") + op.toString(), 20, 15 + (i * 12), Color.WHITE.getRGB());
 			}
 		}
 	
@@ -229,7 +227,7 @@ public class GuiNodeModifier extends GuiContainer
 			}
 			
 			// draw string
-			fontRenderer.drawSplitString(todraw, 20, ySize - 45, xSize - 30, Color.WHITE.getRGB());
+			fontRendererObj.drawSplitString(todraw, 20, ySize - 45, xSize - 30, Color.WHITE.getRGB());
 			
 			// draw required wisp items from right to left
 			int xpos = xSize - 30;
@@ -263,7 +261,7 @@ public class GuiNodeModifier extends GuiContainer
 				Rectangle rect = new Rectangle(xpos, 15, 16, 16);
 	
 				if (rect.contains(MouseX, MouseY))
-					drawItemStackTooltip(essence, MouseX, MouseY);
+					renderToolTip(essence, MouseX, MouseY);
 				
 				xpos -= 20;
 			
@@ -282,7 +280,7 @@ public class GuiNodeModifier extends GuiContainer
 	@SideOnly(Side.CLIENT)
 	protected void mouseClicked(int x, int y, int keycode)
 	{
-		if (((TileNodeModifier)(world.getBlockTileEntity(blockX,  blockY,  blockZ))).isActive())
+		if (((TileNodeModifier)(world.getTileEntity(blockX,  blockY,  blockZ))).isActive())
 			return;
 		
 		if (buttonpos.contains(x, y))

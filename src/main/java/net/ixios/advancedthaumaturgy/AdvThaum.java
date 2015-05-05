@@ -26,9 +26,10 @@ import net.ixios.advancedthaumaturgy.misc.ATServerCommand;
 import net.ixios.advancedthaumaturgy.misc.ArcingDamageManager;
 import net.ixios.advancedthaumaturgy.misc.ChunkLoadingClass;
 import net.ixios.advancedthaumaturgy.proxies.CommonProxy;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -50,7 +51,6 @@ import thaumcraft.api.wands.WandRod;
 import thaumcraft.api.wands.WandTriggerRegistry;
 import thaumcraft.common.Thaumcraft;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -62,14 +62,13 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid=AdvThaum.MODID, version=AdvThaum.VERSION, name=AdvThaum.NAME, 
 	dependencies="required-after:Thaumcraft", acceptedMinecraftVersions=AdvThaum.MC_VERSION)
 
 public class AdvThaum 
 {
-	public final static String MODID = "AdvancedThaumaturgy";
+	public final static String MODID = "advthaum";
 	public final static String VERSION = "@version@";
 	public final static String NAME = "Advanced Thaumaturgy";
 	public final static String MC_VERSION = "@mc_version@";
@@ -117,6 +116,8 @@ public class AdvThaum
 	 {
 	     NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
 
+	     Placeholder = new BlockPlaceholder(Material.air);
+	     
 	     config = new Configuration(event.getSuggestedConfigurationFile());
 	     config.load();
 	     
@@ -163,13 +164,11 @@ public class AdvThaum
 	     
 	     if (config.get("Feature Control", "enable_wand_upgrades", true).getBoolean(true))
 	     {
-	    	 ArcaneCrystal = new ItemArcaneCrystal();	    
+	    	 ArcaneCrystal = new ItemArcaneCrystal();
 	    	 EndstoneChunk = new ItemEndstoneChunk();
 	     }
 
 	     ////////////////////////////////////////////////////////
-	     
-	     Placeholder = new BlockPlaceholder(Material.air);
 	  
 	     // these must be done before proxy.register
 		 new BCCompatChecker().register();
@@ -183,8 +182,8 @@ public class AdvThaum
 	     LanguageRegistry.instance().addStringLocalization("tc.research_category.ADVTHAUM", "en_US", "Advanced Thaumaturgy");
 	     
 	     MinecraftForge.EVENT_BUS.register(new ATEventHandler());
-	     
-	     TickRegistry.registerTickHandler(new ArcingDamageManager(), Side.SERVER);
+
+         FMLCommonHandler.instance().bus().register(new ArcingDamageManager());
 	     
 	     ForgeChunkManager.setForcedChunkLoadingCallback(instance, new ChunkLoadingClass());
 	    
@@ -251,20 +250,17 @@ public class AdvThaum
 		 	 
 	     registerStuff();
 
-	    if (config.get("Feature Control", "enable_mercurial_core", true).getBoolean(true))
+	     if (config.get("Feature Control", "enable_mercurial_core", true).getBoolean(true))
 	     {
 	    	int capacity = 500;
 	    	for (WandRod rod : WandRod.rods.values())
 	    		capacity = Math.max(capacity, rod.getCapacity());
-	    	
-	    	int mercurialcoreid = config.getItem("ItemIDs", "mercurialcore", 13333).getInt();
-	    	int mercurialwandid = config.getItem("ItemIDs", "mercurialwand", 13334).getInt();
 		     
-	    	 MercurialRodBase = new ItemMercurialRodBase(mercurialcoreid);
+	    	 MercurialRodBase = new ItemMercurialRodBase();
 	    	 MercurialRod = new ItemMercurialRod(capacity);
 	    	 
 	    	 if (config.get("Feature Control", "enable_mercurial_wand", true).getBoolean(true))
-	    		 MercurialWand = new ItemMercurialWand(mercurialwandid);
+	    		 MercurialWand = new ItemMercurialWand();
 	     }
 		    
 		 if (MercurialRodBase != null)
@@ -277,26 +273,26 @@ public class AdvThaum
 		 //ThaumicVulcanizer.register();
 		 
 		 // enable activating node in a jar by wanding the top wood slabs
-		 WandTriggerRegistry.registerWandBlockTrigger(Thaumcraft.proxy.wandManager, 4, Block.woodSingleSlab.blockID, -1);
+		 WandTriggerRegistry.registerWandBlockTrigger(Thaumcraft.proxy.wandManager, 4, Blocks.wooden_slab, -1, MODID);
 		 //WandTriggerRegistry.registerWandBlockTrigger(Thaumcraft.proxy.wandManager, 5, Block.obsidian.blockID, -1);
 		 
 		 if (config.get("Feature Control", "add_permutatio_to_eggs", true).getBoolean(true))
 		 {
-			 AspectList list = ThaumcraftApiHelper.getObjectAspects(new ItemStack(Item.egg));
+			 AspectList list = ThaumcraftApiHelper.getObjectAspects(new ItemStack(Items.egg));
 			 if (!list.aspects.containsKey(Aspect.EXCHANGE))
 			 {
 				list.add(Aspect.EXCHANGE, 1); 
-				 ThaumcraftApi.registerObjectTag(Item.egg.itemID, -1, list);
+				 ThaumcraftApi.registerObjectTag(new ItemStack(Items.egg), list);
 			 }
 		 }
 		 
 		 if (config.get("Feature Control", "add_exanimus_to_bones", true).getBoolean(true))
 		 {
-			 AspectList list = ThaumcraftApiHelper.getObjectAspects(new ItemStack(Item.bone));
+			 AspectList list = ThaumcraftApiHelper.getObjectAspects(new ItemStack(Items.bone));
 			 if (!list.aspects.containsKey(Aspect.UNDEAD))
 			 {
 				 list.add(Aspect.UNDEAD, 1);
-				 ThaumcraftApi.registerObjectTag(Item.bone.itemID, -1, list);
+				 ThaumcraftApi.registerObjectTag(new ItemStack(Items.bone), list);
 			 }
 		 }
 			 

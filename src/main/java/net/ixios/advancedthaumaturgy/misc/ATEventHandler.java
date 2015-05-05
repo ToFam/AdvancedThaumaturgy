@@ -1,31 +1,28 @@
 package net.ixios.advancedthaumaturgy.misc;
 
-import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.enchants.EnchantArcing;
-import net.ixios.advancedthaumaturgy.misc.ArcData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import thaumcraft.common.items.wands.foci.ItemFocusShock;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class ATEventHandler 
 {
 	
 	
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onItemTossEvent(ItemTossEvent event)
 	{
 		
 	}
 	 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onServerChatEvent(ServerChatEvent event)
 	{
 		/*String args[] = event.message.split("\\s");
@@ -80,7 +77,7 @@ public class ATEventHandler
 		}*/
 	}
 	
-	 @ForgeSubscribe
+	 @SubscribeEvent
 	 public void onLivingAttack(LivingAttackEvent event)
 	 {
 		 if (event.source.getDamageType() == "indirectMagic")

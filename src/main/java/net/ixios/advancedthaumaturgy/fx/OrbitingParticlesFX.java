@@ -1,9 +1,9 @@
 package net.ixios.advancedthaumaturgy.fx;
 
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 
 @SideOnly(Side.CLIENT)
 public class OrbitingParticlesFX 

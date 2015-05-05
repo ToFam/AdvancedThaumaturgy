@@ -2,20 +2,20 @@ package net.ixios.advancedthaumaturgy.items;
 
 import java.util.List;
 
-import org.lwjgl.input.Keyboard;
-
 import net.ixios.advancedthaumaturgy.AdvThaum;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
+import org.lwjgl.input.Keyboard;
+
 public class ItemEngine extends ItemBlock
 {
-
-	public ItemEngine(int id)
+	public ItemEngine(Block block)
 	{
-		super(id);
+		super(block);
 		this.setCreativeTab(AdvThaum.tabAdvThaum);
 	}
 

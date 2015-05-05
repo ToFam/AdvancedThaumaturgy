@@ -2,28 +2,23 @@ package net.ixios.advancedthaumaturgy.items;
 
 import java.util.List;
 
-import org.bouncycastle.jcajce.provider.symmetric.util.BaseWrapCipher;
-
+import net.ixios.advancedthaumaturgy.AdvThaum;
+import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.util.StatCollector;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.InfusionRecipe;
-import thaumcraft.api.crafting.ShapedArcaneRecipe;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.common.config.ConfigItems;
 import thaumcraft.common.config.ConfigResearch;
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagByte;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.util.StatCollector;
-import net.minecraft.world.World;
 
 public class ItemArcaneCrystal extends Item
 {
@@ -56,9 +51,8 @@ public class ItemArcaneCrystal extends Item
 		}
 	}
 	
-	public ItemArcaneCrystal(int id)
+	public ItemArcaneCrystal()
     {
-	    super(id);
 	    setHasSubtypes(true);
 	    setUnlocalizedName("at.arcanecrystal");
     }
@@ -95,8 +89,9 @@ public class ItemArcaneCrystal extends Item
 		 registerPotency();
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void getSubItems(int par1, CreativeTabs tab, List list)
+	public void getSubItems(Item par1, CreativeTabs tab, List list)
 	{
 	    list.add(new ItemStack(this, 1, 0));
 	    list.add(new ItemStack(this, 1, 1));
@@ -116,7 +111,7 @@ public class ItemArcaneCrystal extends Item
 	}
 	
 	@Override
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
 	    itemIcon = ir.registerIcon("advthaum:wandupgrade");
 	}
@@ -152,14 +147,14 @@ public class ItemArcaneCrystal extends Item
 	    	case 24: // fire
 	    		return Aspect.FIRE.getColor();
 	    	case 25: // frost
-	    		return Aspect.ICE.getColor();
+	    		return Aspect.COLD.getColor();
 	    	default:
 	    		return 0xFFFFFFFF;
 	    }
 	}
 	
 	@Override
-	public String getItemDisplayName(ItemStack stack)
+	public String getItemStackDisplayName(ItemStack stack)
 	{
 	    return StatCollector.translateToLocal("item.at.arcanecrystal." + stack.getItemDamage() + ".name");
 	}
@@ -172,7 +167,8 @@ public class ItemArcaneCrystal extends Item
 															 ConfigItems.WAND_ROD_ICE.getItem(), ConfigItems.WAND_ROD_OBSIDIAN.getItem(),
 															 ConfigItems.WAND_ROD_QUARTZ.getItem(), ConfigItems.WAND_ROD_REED.getItem() });
 	
-		 NBTTagInt tag = new NBTTagInt("upgrade", Upgrades.Recharge.getFlag());
+		NBTTagInt tag[] = new NBTTagInt[1];
+		tag[0] = new NBTTagInt(Upgrades.Recharge.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADERECHARGE", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 1) });
@@ -204,7 +200,8 @@ public class ItemArcaneCrystal extends Item
 				new AspectList().add(Aspect.SLIME, 16).add(Aspect.EXCHANGE,  16),
 				new ItemStack(this, 1, 0), new ItemStack[] { TCItems.arcanefurance, TCItems.arcanefurance, TCItems.arcanefurance, TCItems.arcanefurance });
 		
-		NBTTagInt tag = new NBTTagInt("upgrade", Upgrades.MultiplyDrain.getFlag());
+		NBTTagInt tag[] = new NBTTagInt[1];
+		tag[0] = new NBTTagInt(Upgrades.MultiplyDrain.getFlag());
 		InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADEDRAIN", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 3) });
@@ -212,7 +209,7 @@ public class ItemArcaneCrystal extends Item
 		 
 		 // drain multiplier
 		ATResearchItem ri = new ATResearchItem("UPGRADEDRAIN", "ADVTHAUM",
-					recipe.aspects,
+					recipe.getAspects(),
 					-2, 7, 5,
 					new ItemStack(this, 1, 3));
 					 
@@ -234,23 +231,24 @@ public class ItemArcaneCrystal extends Item
 	private void registerCompoundDrain()
 	{
 		// compound drainer
-		ItemStack blaze = new ItemStack(Item.blazePowder);
-		ItemStack tear = new ItemStack(Item.ghastTear);
-		ItemStack cream = new ItemStack(Item.magmaCream);
-		ItemStack poisonpotato = new ItemStack(Item.poisonousPotato);
+		ItemStack blaze = new ItemStack(Items.blaze_powder);
+		ItemStack tear = new ItemStack(Items.ghast_tear);
+		ItemStack cream = new ItemStack(Items.magma_cream);
+		ItemStack poisonpotato = new ItemStack(Items.poisonous_potato);
 		
-		ItemStack potato = new ItemStack(Item.potato);
-		ItemStack eye = new ItemStack(Item.spiderEye);
+		ItemStack potato = new ItemStack(Items.potato);
+		ItemStack eye = new ItemStack(Items.spider_eye);
 		
-		ItemStack pearl = new ItemStack(Item.enderPearl);
+		ItemStack pearl = new ItemStack(Items.ender_pearl);
 		
-		GameRegistry.addRecipe(new ItemStack(Item.poisonousPotato), new Object[] { "EEE", "EPE", "EEE", 'E', eye, 'P', potato });
+		GameRegistry.addRecipe(new ItemStack(Items.poisonous_potato), new Object[] { "EEE", "EPE", "EEE", 'E', eye, 'P', potato });
 		
 		InfusionRecipe recipe = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADECOMPOUND", new ItemStack(this, 1, 2), 5,
-				new AspectList().add(Aspect.ARMOR, 10).add(Aspect.DEATH,  10).add(Aspect.SEED, 10).add(Aspect.ICE, 10).add(Aspect.SLIME, 10).add(Aspect.SLIME, 10),
+				new AspectList().add(Aspect.ARMOR, 10).add(Aspect.DEATH,  10).add(Aspect.CROP, 10).add(Aspect.COLD, 10).add(Aspect.SLIME, 10).add(Aspect.SLIME, 10),
 				new ItemStack(this, 1, 0), new ItemStack[] { blaze, pearl, tear, pearl, cream, pearl, poisonpotato, pearl });
 		
-		 NBTTagInt tag = new NBTTagInt("upgrade", Upgrades.CompoundDrain.getFlag());
+		NBTTagInt tag[] = new NBTTagInt[1];
+		tag[0] = new NBTTagInt(Upgrades.CompoundDrain.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADECOMPOUND", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 2) });
@@ -286,7 +284,8 @@ public class ItemArcaneCrystal extends Item
 															  TCItems.cloth, TCItems.firecluster, TCItems.cloth, TCItems.earthcluster,
 															  TCItems.cloth, TCItems.ordocluster, TCItems.cloth, TCItems.entropycluster });
 		
-		 NBTTagInt tag = new NBTTagInt("upgrade", Upgrades.Discount.getFlag());
+		NBTTagInt tag[] = new NBTTagInt[1];
+		tag[0] = new NBTTagInt(Upgrades.Discount.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADEDISCOUNT", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 4) });
@@ -294,7 +293,7 @@ public class ItemArcaneCrystal extends Item
 		 ConfigResearch.recipes.put("WANDUPGRADEDISCOUNT", recipe);
 		 
 		ATResearchItem ri = new ATResearchItem("UPGRADEDISCOUNT", "ADVTHAUM",
-					recipe.aspects,
+					recipe.getAspects(),
 					2, 3, 5,
 					new ItemStack(this, 1, 4));
 					 
@@ -320,7 +319,8 @@ public class ItemArcaneCrystal extends Item
 				new ItemStack(this, 1, 0), new ItemStack [] { TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster,
 															  TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster});
 	
-		 NBTTagInt tag = new NBTTagInt("upgrade", Upgrades.Stabilizer.getFlag());
+		NBTTagInt tag[] = new NBTTagInt[1];
+		tag[0] = new NBTTagInt(Upgrades.Stabilizer.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADESTABILIZER", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 5) });
@@ -353,7 +353,8 @@ public class ItemArcaneCrystal extends Item
 				new AspectList().add(Aspect.ORDER, 128).add(Aspect.MAGIC,  64),
 				new ItemStack(this, 1, 0), new ItemStack [] { TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster });
 	
-		 NBTTagInt tag = new NBTTagInt("upgrade", Upgrades.Potent.getFlag());
+		NBTTagInt tag[] = new NBTTagInt[1];
+		tag[0] = new NBTTagInt(Upgrades.Potent.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADEPOTENCY", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 6) });

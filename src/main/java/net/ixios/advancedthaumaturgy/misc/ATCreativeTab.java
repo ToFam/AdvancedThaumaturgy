@@ -1,10 +1,11 @@
 package net.ixios.advancedthaumaturgy.misc;
 
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import thaumcraft.common.config.ConfigItems;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import thaumcraft.common.config.ConfigItems;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
 
 public class ATCreativeTab extends CreativeTabs 
 {
@@ -15,9 +16,8 @@ public class ATCreativeTab extends CreativeTabs
     }
     
     @SideOnly(Side.CLIENT)
-    public int getTabIconItemIndex()
+    public Item getTabIconItem()
     {
-    	ItemStack quicksilver = new ItemStack(ConfigItems.itemResource, 1, 3);
-    	return quicksilver.itemID;
+    	return new ItemStack(ConfigItems.itemResource, 1, 3).getItem();
     }
 }

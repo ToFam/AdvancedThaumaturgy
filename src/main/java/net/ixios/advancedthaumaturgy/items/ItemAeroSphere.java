@@ -1,34 +1,22 @@
 package net.ixios.advancedthaumaturgy.items;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.research.ResearchPage;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.blocks.BlockPlaceholder;
-import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
 import net.ixios.advancedthaumaturgy.misc.Vector3;
 import net.ixios.advancedthaumaturgy.misc.Vector3F;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSand;
-import net.minecraft.block.BlockStationary;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ItemAeroSphere extends Item
 {
 
-	public ItemAeroSphere(int id)
+	public ItemAeroSphere()
     {
-	    super(id);
 	    this.setUnlocalizedName("at.aerosphere");
     }
 	
@@ -57,7 +45,7 @@ public class ItemAeroSphere extends Item
 	}
 	
 	@Override
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
 	    itemIcon = ir.registerIcon("advthaum:aerosphere");
 	}
@@ -74,7 +62,6 @@ public class ItemAeroSphere extends Item
 	    	return;
 	    
 	    EntityPlayer player = (EntityPlayer)entity;
-	    NBTTagCompound tag = player.getEntityData();
 	    
 	    // check for blocks in range and if not placeholder, replace with placeholder and store
 	    Vector3F plrpos = new Vector3F((float)player.posX, (float)player.posY, (float)player.posZ);
@@ -86,10 +73,10 @@ public class ItemAeroSphere extends Item
 	    		for (int cz = (int)plrpos.z - 8; cz <= (int)plrpos.z + 8; cz++)
 	    		{
 	    			Vector3 blockpos = new Vector3(cx, cy, cz);
-	    			Block block = Block.blocksList[world.getBlockId(blockpos.x, blockpos.y, blockpos.z)];
-	    			if (block == null || block.blockID == BlockPlaceholder.blockID)
+	    			Block block = world.getBlock(blockpos.x, blockpos.y, blockpos.z);
+	    			if (block == null || block.equals(AdvThaum.Placeholder))
 	    				continue;
-	    			if (plrpos.distanceTo(blockpos) <= 6 && world.getBlockMaterial(cx, cy,  cz).isLiquid())
+	    			if (plrpos.distanceTo(blockpos) <= 6 && world.getBlock(cx, cy,  cz).getMaterial().isLiquid())
     				{
 	    				AdvThaum.proxy.beginMonitoring(player, blockpos, block);			
     				}

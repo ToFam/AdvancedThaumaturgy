@@ -106,7 +106,7 @@ public class BlockThaumicVulcanizer extends BlockContainer
     			// set all but the middle block to 'fake' air
     			if (!(xc == x && zc == z))
     			{
-    				world.setBlock(xc, y, zc, new BlockPlaceholder(Material.air));
+    				world.setBlock(xc, y, zc, AdvThaum.Placeholder);
     				TilePlaceholder te = new TilePlaceholder();
     				world.setTileEntity(xc, y, zc, te);
     			}

@@ -21,8 +21,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockPlaceholder extends Block implements ITileEntityProvider
 {
-
-	public static int blockID;
 	public final int renderID;
 	
 	public BlockPlaceholder(Material material)

@@ -41,10 +41,7 @@ public class FloatyLineFX extends CustomParticleFX
 	public void renderParticle(Tessellator tessellator, float partialTicks,	float rotationX, float rotationXZ, float rotationZ,
 			float rotationYZ, float rotationXY)
 	{
-		boolean wasdrawing = tessellator.isDrawing;
-		
-		if (wasdrawing)
-			tessellator.draw();
+		tessellator.draw();
 		
 		float ticks = (float)(Minecraft.getMinecraft().renderViewEntity).ticksExisted + partialTicks;
         float h = (float) (Math.sin((((ticks * random) % 32767D) / 16D)) * 0.05D);
@@ -53,8 +50,7 @@ public class FloatyLineFX extends CustomParticleFX
     	UtilsFX.drawFloatyLine(src.x, src.y - (h * 2.0D), src.z, dst.x, dst.y, dst.z, partialTicks, color, "textures/misc/wispy.png", -0.02F, Math.min(ticks, 10F) / 10F);
     	GL11.glPopMatrix();
         
-        if (wasdrawing)
-			tessellator.startDrawingQuads();
+		tessellator.startDrawingQuads();
         
         Minecraft.getMinecraft().renderEngine.bindTexture(particleTexture);
         

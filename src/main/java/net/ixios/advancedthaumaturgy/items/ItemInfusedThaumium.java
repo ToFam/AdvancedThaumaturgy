@@ -7,9 +7,8 @@ import net.minecraft.item.Item;
 public class ItemInfusedThaumium extends Item
 {
 
-	public ItemInfusedThaumium(int id)
+	public ItemInfusedThaumium()
 	{
-		super(id);
 	}
 
 	public void register()

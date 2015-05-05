@@ -1,43 +1,31 @@
 package net.ixios.advancedthaumaturgy.items;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.bouncycastle.jcajce.provider.symmetric.util.BaseWrapCipher;
-import org.lwjgl.input.Keyboard;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.ReflectionHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.items.ItemArcaneCrystal.Upgrades;
 import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
-import net.ixios.advancedthaumaturgy.misc.Utilities;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.event.terraingen.BiomeEvent.GetWaterColor;
+
+import org.lwjgl.input.Keyboard;
+
 import thaumcraft.api.ThaumcraftApi;
-import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
-import thaumcraft.api.research.ResearchItem;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.api.wands.WandCap;
 import thaumcraft.api.wands.WandRod;
@@ -45,9 +33,13 @@ import thaumcraft.common.config.ConfigItems;
 import thaumcraft.common.config.ConfigResearch;
 import thaumcraft.common.items.wands.ItemWandCasting;
 import thaumcraft.common.items.wands.WandManager;
-import thaumcraft.common.lib.ArcaneWandRecipe;
 import thaumcraft.common.lib.research.ResearchManager;
 import thaumcraft.common.tiles.TileInfusionMatrix;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.ReflectionHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemMercurialWand extends ItemWandCasting
 {
@@ -59,9 +51,8 @@ public class ItemMercurialWand extends ItemWandCasting
     public static ItemStack BasicWand;
     public static ItemStack AnyWand;
     
-    public ItemMercurialWand(int i)
+    public ItemMercurialWand()
     {
-        super(i);
         myFormatter = new DecimalFormat("#######.##");
         animation = null;
         super.maxStackSize = 1;
@@ -115,7 +106,7 @@ public class ItemMercurialWand extends ItemWandCasting
 		 list.add(Aspect.CRYSTAL, 25);
 		 list.add(Aspect.TREE, 25);
         
-        ThaumcraftApi.registerObjectTag(this.itemID, -1, list);
+        ThaumcraftApi.registerObjectTag(new ItemStack(this), new int[]{}, list);
         
         for (String key : WandCap.caps.keySet())
         {
@@ -140,20 +131,20 @@ public class ItemMercurialWand extends ItemWandCasting
    
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister icon)
+    public void registerIcons(IIconRegister icon)
     {
         itemIcon = icon.registerIcon("advthaum:wand_quicksilver");
     }
 
     @Override
-    public Icon getIcon(ItemStack stack, int pass)
+    public IIcon getIcon(ItemStack stack, int pass)
     {
         return itemIcon;
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-    public void getSubItems(int par1, CreativeTabs tab, List items)
+    public void getSubItems(Item par1, CreativeTabs tab, List items)
     {
         ItemStack w1 = new ItemStack(this, 1, 0);
         ((ItemWandCasting)w1.getItem()).setRod(w1, AdvThaum.MercurialRod);
@@ -206,14 +197,12 @@ public class ItemMercurialWand extends ItemWandCasting
     }
         
     @Override
-    public float getConsumptionModifier(ItemStack stack, EntityPlayer player, Aspect aspect)
+    public float getConsumptionModifier(ItemStack stack, EntityPlayer player, Aspect aspect, boolean crafting)
     {
     	float discount = 0.0f;
     	if (hasUpgrade(stack, Upgrades.Discount))
     		discount = 0.1f;
-    	float cost = 1f - discount;
-    	float cm = super.getConsumptionModifier(stack, player, aspect);
-    	return (super.getConsumptionModifier(stack, player, aspect) - discount);
+    	return (super.getConsumptionModifier(stack, player, aspect, crafting) - discount);
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -363,7 +352,7 @@ public class ItemMercurialWand extends ItemWandCasting
     public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
     {
     	
-    	TileEntity te = world.getBlockTileEntity(x, y, z);
+    	TileEntity te = world.getTileEntity(x, y, z);
 		if (!(te instanceof TileInfusionMatrix))
 			return super.onItemUseFirst(stack, player, world, x, y, z, side, hitX, hitY, hitZ);;
 		TileInfusionMatrix im = (TileInfusionMatrix)te;
@@ -374,11 +363,19 @@ public class ItemMercurialWand extends ItemWandCasting
     		{
     			AdvThaum.proxy.beginMonitoring(im);
     		}
-    		else if (im.active && Utilities.isOp(player.username))
+    		else if (im.active)
     		{
-    			int currinstability = ReflectionHelper.getPrivateValue(TileInfusionMatrix.class, im, "instability");
-    			player.addChatMessage("[OP Info]: Instability: " + currinstability);
-    			return true;
+    			if (player instanceof EntityPlayerMP)
+    			{
+    				EntityPlayerMP p = (EntityPlayerMP) player;
+        			if (FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152596_g(p.getGameProfile()))
+        			{
+            			int currinstability = ReflectionHelper.getPrivateValue(TileInfusionMatrix.class, im, "instability");
+        				ChatComponentText cc = new ChatComponentText("[OP Info]: Instability: " + currinstability);
+            			player.addChatMessage(cc);
+            			return true;
+        			}
+    			}
     		}
     	}
     	

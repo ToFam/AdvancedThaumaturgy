@@ -62,10 +62,7 @@ public class CustomParticleFX extends EntityFX
 	public void renderParticle(Tessellator tessellator, float partialTicks, float rotationX, float rotationXZ, 
 			float rotationZ, float rotationYZ, float rotationXY)
 	{
-		boolean wasdrawing = tessellator.isDrawing;
-		
-		if (wasdrawing)
-			tessellator.draw();
+		tessellator.draw();
 		
 		GL11.glPushMatrix();
         GL11.glDepthMask(false);
@@ -98,8 +95,7 @@ public class CustomParticleFX extends EntityFX
         
         tessellator.draw();
 		
-		if (wasdrawing)
-			tessellator.startDrawingQuads();
+		tessellator.startDrawingQuads();
 
 		GL11.glDisable(3042);
         GL11.glDepthMask(true);
