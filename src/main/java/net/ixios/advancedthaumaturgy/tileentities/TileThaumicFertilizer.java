@@ -1,46 +1,36 @@
 package net.ixios.advancedthaumaturgy.tileentities;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
-import cpw.mods.fml.relauncher.ReflectionHelper;
+import com.mojang.authlib.GameProfile;
+
+import net.ixios.advancedthaumaturgy.AdvThaum;
+import net.ixios.advancedthaumaturgy.misc.Utilities;
+import net.ixios.advancedthaumaturgy.misc.Vector3F;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFlower;
+import net.minecraft.block.BlockSapling;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemDye;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.ForgeDirection;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IAspectContainer;
 import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.tiles.TileJarFillable;
 import vazkii.botania.api.ISpecialFlower;
-import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.misc.Utilities;
-import net.ixios.advancedthaumaturgy.misc.Vector3F;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockFlower;
-import net.minecraft.block.BlockGrass;
-import net.minecraft.block.BlockLilyPad;
-import net.minecraft.block.BlockMushroom;
-import net.minecraft.block.BlockSapling;
-import net.minecraft.block.BlockStem;
-import net.minecraft.block.BlockVine;
-import net.minecraft.block.BlockWood;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.common.FakePlayer;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ForgeDummyContainer;
 
 public class TileThaumicFertilizer extends TileEntity implements IAspectContainer
 {
@@ -168,18 +158,17 @@ public class TileThaumicFertilizer extends TileEntity implements IAspectContaine
         if (arrayposition >= blockstomonitor.size())
         	arrayposition = 0;
         
-        Material mat = worldObj.getBlockMaterial(cx, cy, cz);
-        
-        Block block = Block.blocksList[worldObj.getBlockId(cx, cy, cz)];
+        Block block = worldObj.getBlock(cx, cy, cz);
+        Material mat = block.getMaterial();
         
         if (AdvThaum.debug)
         	AdvThaum.proxy.createCustomParticle(worldObj, cx, cy, cz, 0f, .1f, 0f, 0xFFFF0000);
         
-        if (block == null)
+        if (block.equals(Blocks.air))
         	return;
         
         // check if the block is farmland and if it needs watered
-        if (block.blockID == Block.tilledField.blockID)
+        if (block.equals(Blocks.farmland))
         {
         	int meta = worldObj.getBlockMetadata(cx, cy, cz);
         	
@@ -205,7 +194,7 @@ public class TileThaumicFertilizer extends TileEntity implements IAspectContaine
         	return;
         
        
-        if (!(block.blockID == ConfigBlocks.blockManaPod.blockID))
+        if (!(block.equals(ConfigBlocks.blockManaPod)))
     		return;
     	
     	fertilize(cx, cy, cz);
@@ -272,12 +261,13 @@ public class TileThaumicFertilizer extends TileEntity implements IAspectContaine
     
     private void fertilize(int x, int y, int z)
     {
-    	if (herbapool > costperfertilize && ItemDye.applyBonemeal(new ItemStack(Item.dyePowder, 1, 0), worldObj, x, y, z, new FakePlayer(worldObj, "advthaumPlayer")))
+    	if (herbapool > costperfertilize && ItemDye.applyBonemeal(new ItemStack(Items.dye, 1, 0), worldObj, x, y, z, 
+    			new FakePlayer((WorldServer)worldObj, new GameProfile(null, "advthaumPlayer"))))
     	{
     		AdvThaum.proxy.createParticle(worldObj, xCoord + 0.5f, yCoord + 0.7f, zCoord + 0.5f, x, y, z, Aspect.SLIME.getColor());
     		AdvThaum.proxy.createSparkleBurst(worldObj, x + 0.5F, y + 0.5F, z + 0.5F, 8, 0xFF00FF00);
     		herbapool -= costperfertilize;
-    		Block b = Block.blocksList[worldObj.getBlockId(x,  y,  z)];
+    		Block b = worldObj.getBlock(x,  y,  z);
     		b.updateTick(worldObj, x, y, z, worldObj.rand);
     	}
     }
@@ -287,11 +277,11 @@ public class TileThaumicFertilizer extends TileEntity implements IAspectContaine
     	if (herbapool < costperfertilize)
     		return;
     	
-    	Block block = Block.blocksList[worldObj.getBlockId(x,  y,  z)];
+    	Block block = worldObj.getBlock(x,  y,  z);
     	
     	ForgeDirection fd = ForgeDirection.VALID_DIRECTIONS[worldObj.rand.nextInt(ForgeDirection.VALID_DIRECTIONS.length - 2) + 2];
 
-    	if (worldObj.getBlockId(x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ) != 0)
+    	if (!worldObj.getBlock(x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ).equals(Blocks.air))
     		return;
     	
     	if (!block.canPlaceBlockAt(worldObj, x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ))
@@ -299,7 +289,7 @@ public class TileThaumicFertilizer extends TileEntity implements IAspectContaine
     	
     	int meta = worldObj.getBlockMetadata(x,  y,  z);
     	
-    	worldObj.setBlock(x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ, block.blockID, meta, 3);
+    	worldObj.setBlock(x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ, block, meta, 3);
     	fertilize(x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ);
     }
     

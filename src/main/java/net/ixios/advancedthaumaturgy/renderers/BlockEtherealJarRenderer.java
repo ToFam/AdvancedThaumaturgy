@@ -1,38 +1,30 @@
 package net.ixios.advancedthaumaturgy.renderers;
 
 import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.blocks.BlockEtherealJar;
 import net.ixios.advancedthaumaturgy.tileentities.TileEtherealJar;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.IItemRenderer;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
 import thaumcraft.client.lib.UtilsFX;
-import thaumcraft.client.renderers.tile.ModelJar;
+import thaumcraft.client.renderers.models.ModelJar;
 import thaumcraft.common.blocks.BlockJar;
-import thaumcraft.common.blocks.ItemJarFilled;
-import thaumcraft.common.config.Config;
 import thaumcraft.common.config.ConfigBlocks;
-import thaumcraft.common.tiles.*;
+import thaumcraft.common.tiles.TileJarFillable;
+import cpw.mods.fml.client.FMLClientHandler;
 
 public class BlockEtherealJarRenderer extends TileEntitySpecialRenderer
 {
 
 	private ModelJar model;
-	private ResourceLocation texture = new ResourceLocation("advthaum", "textures/models/etherealjar.png");
+	private ResourceLocation texture = new ResourceLocation(AdvThaum.MODID, "textures/models/etherealjar.png");
 	
     public BlockEtherealJarRenderer()
     {
@@ -44,14 +36,14 @@ public class BlockEtherealJarRenderer extends TileEntitySpecialRenderer
     {
     	TileEtherealJar tile= (TileEtherealJar)te;
     	
-        float wobble = Math.max(Math.abs(tile.wobblex), Math.abs(tile.wobblez)) / 150F;
+        //float wobble = Math.max(Math.abs(tile.wobblex), Math.abs(tile.wobblez)) / 150F;
      
         GL11.glPushMatrix();
         GL11.glDisable(2884);
-        GL11.glTranslatef((float)x + 0.5F, (float)y + 0.01F + wobble, (float)z + 0.5F);
+        //GL11.glTranslatef((float)x + 0.5F, (float)y + 0.01F + wobble, (float)z + 0.5F);
         GL11.glRotatef(180F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(tile.wobblex, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(tile.wobblez, 1.0F, 0.0F, 0.0F);
+        //GL11.glRotatef(tile.wobblex, 0.0F, 0.0F, 1.0F);
+        //GL11.glRotatef(tile.wobblez, 1.0F, 0.0F, 0.0F);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (tile.amount > 0)
@@ -101,9 +93,6 @@ public class BlockEtherealJarRenderer extends TileEntitySpecialRenderer
 
     public void renderLiquid(TileEtherealJar te, double x, double y, double z, float f)
     {
-        if (super.tileEntityRenderer.renderEngine == null)
-            return;
-        
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 1.0F, 0.0F, 0.0F);
         
@@ -116,26 +105,24 @@ public class BlockEtherealJarRenderer extends TileEntitySpecialRenderer
         
         if (te.aspect != null)
             t.setColorOpaque_I(te.aspect.getColor());
-        
+
+        Block etherealJar = AdvThaum.EtherealJar;
+        BlockJar jar = (BlockJar)ConfigBlocks.blockJar;
         int bright = 200;
-        
-        if (te.worldObj != null)
-            bright = Math.max(200, Block.blocksList[Config.blockJarId].getMixedBrightnessForBlock(te.worldObj, te.xCoord, te.yCoord, te.zCoord));
+        if (te.getWorldObj() != null)
+            bright = Math.max(200, jar.getMixedBrightnessForBlock(te.getWorldObj(), te.xCoord, te.yCoord, te.zCoord));
         
         t.setBrightness(bright);
+        IIcon icon = jar.iconLiquid;
         
-        Icon icon = ((BlockJar)Block.blocksList[Config.blockJarId]).iconLiquid;
+        bindTexture(TextureMap.locationBlocksTexture);
         
-        tileEntityRenderer.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-        
-        Block jar = AdvThaum.EtherealJar;
-        
-        renderBlocks.renderFaceYNeg(jar, -0.5D, 0.0D, -0.5D, icon);
-        renderBlocks.renderFaceYPos(jar, -0.5D, 0.0D, -0.5D, icon);
-        renderBlocks.renderFaceZNeg(jar, -0.5D, 0.0D, -0.5D, icon);
-        renderBlocks.renderFaceZPos(jar, -0.5D, 0.0D, -0.5D, icon);
-        renderBlocks.renderFaceXNeg(jar, -0.5D, 0.0D, -0.5D, icon);
-        renderBlocks.renderFaceXPos(jar, -0.5D, 0.0D, -0.5D, icon);
+        renderBlocks.renderFaceYNeg(etherealJar, -0.5D, 0.0D, -0.5D, icon);
+        renderBlocks.renderFaceYPos(etherealJar, -0.5D, 0.0D, -0.5D, icon);
+        renderBlocks.renderFaceZNeg(etherealJar, -0.5D, 0.0D, -0.5D, icon);
+        renderBlocks.renderFaceZPos(etherealJar, -0.5D, 0.0D, -0.5D, icon);
+        renderBlocks.renderFaceXNeg(etherealJar, -0.5D, 0.0D, -0.5D, icon);
+        renderBlocks.renderFaceXPos(etherealJar, -0.5D, 0.0D, -0.5D, icon);
         
         t.draw();
         

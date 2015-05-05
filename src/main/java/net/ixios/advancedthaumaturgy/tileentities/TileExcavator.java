@@ -1,13 +1,13 @@
 package net.ixios.advancedthaumaturgy.tileentities;
 
-import net.ixios.advancedthaumaturgy.blocks.BlockMicrolith;
-import net.ixios.advancedthaumaturgy.misc.Vector3;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-
 import java.awt.Color;
 
+import net.ixios.advancedthaumaturgy.AdvThaum;
+import net.ixios.advancedthaumaturgy.misc.Vector3;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import thaumcraft.common.items.wands.ItemWandCasting;
 
 public class TileExcavator extends TileMicrolithBase
@@ -60,9 +60,9 @@ public class TileExcavator extends TileMicrolithBase
 	{
 		for (int offset = 0; offset < 64; offset++)
 		{
-			int id = worldObj.getBlockId(xCoord + (dir.offsetX * offset), yCoord, zCoord + (dir.offsetZ * offset));
+			Block b = worldObj.getBlock(xCoord + (dir.offsetX * offset), yCoord, zCoord + (dir.offsetZ * offset));
 			int metadata = worldObj.getBlockMetadata(xCoord + (dir.offsetX * offset), yCoord, zCoord + (dir.offsetZ * offset));
-			if (id == BlockMicrolith.blockID && metadata == 10)
+			if (b.equals(AdvThaum.Microlith) && metadata == 10)
 				return true;
 		}
 		return false;

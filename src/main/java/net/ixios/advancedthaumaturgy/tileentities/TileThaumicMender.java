@@ -115,18 +115,6 @@ public class TileThaumicMender extends TileEntity implements IAspectContainer, I
 	}
 
 	@Override
-	public String getInvName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -136,18 +124,6 @@ public class TileThaumicMender extends TileEntity implements IAspectContainer, I
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public void openChest() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void closeChest() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -174,17 +150,34 @@ public class TileThaumicMender extends TileEntity implements IAspectContainer, I
 		return false;
 	}
 
-
-
-
-
-
-
-
 	@Override
 	public boolean doesContainerAccept(Aspect arg0)
 	{
 		return true;
+	}
+
+	@Override
+	public String getInventoryName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void openInventory() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void closeInventory() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

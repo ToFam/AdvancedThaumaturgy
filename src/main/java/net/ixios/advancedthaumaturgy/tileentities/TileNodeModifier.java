@@ -407,7 +407,7 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 		{
 			for (int zc = zCoord - 4; zc < zCoord + 4; zc++)
 			{
-				TileEntity te = worldObj.getBlockTileEntity(xc, yCoord, zc);
+				TileEntity te = worldObj.getTileEntity(xc, yCoord, zc);
 				if (te instanceof TilePedestal)
 				{
 					pedestals.add((TilePedestal)te);
@@ -449,7 +449,7 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 	public boolean startProcess(Operation op)
 	{
 		cleanup();
-		TileEntity te = (TileJarNode) worldObj.getBlockTileEntity(xCoord,  yCoord + 1, zCoord);
+		TileEntity te = (TileJarNode) worldObj.getTileEntity(xCoord,  yCoord + 1, zCoord);
 		if (te == null || !(te instanceof TileJarNode))
 		{
 			worldObj.playSoundEffect(xCoord, yCoord, zCoord, "thaumcraft:craftfail", 1.0F, 0.6F);
@@ -646,7 +646,7 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 		
 	private void updateNode()
 	{
-		TileEntity te = worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord);
+		TileEntity te = worldObj.getTileEntity(xCoord, yCoord + 1, zCoord);
 		
 		if (!(te instanceof TileJarNode))
 			return;
@@ -673,7 +673,7 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 			
 			case IncreaseAspect:
 			{
-				jar.setNodeVisBase((short)(jar.getNodeVisBase() + 1));
+				jar.setNodeVisBase(aspecttoincrease, (short)(jar.getNodeVisBase(aspecttoincrease) + 1));
 			}
 			break;
 			
@@ -759,7 +759,7 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 	    	int x = nbt.getInteger("jarx");
 	    	int y = nbt.getInteger("jarx");
 	    	int z = nbt.getInteger("jarx");
-	    	TileEntity te = worldObj == null ? null : worldObj.getBlockTileEntity(x, y,  z);
+	    	TileEntity te = worldObj == null ? null : worldObj.getTileEntity(x, y,  z);
 	    	if (te != null && te instanceof TileJarFillable)
 	    		essentiajar = (TileJarFillable)te;
 	    }
@@ -782,7 +782,7 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 			int x = nbt.getInteger("pedx_" + i);
 			int y = nbt.getInteger("pedy_" + i);
 			int z = nbt.getInteger("pedz_" + i);
-			TileEntity te = worldObj == null ? null : worldObj.getBlockTileEntity(x,  y,  z);
+			TileEntity te = worldObj == null ? null : worldObj.getTileEntity(x,  y,  z);
 			if (te != null && te instanceof TilePedestal)
 				pedestals.add((TilePedestal)te);
 		}
@@ -794,7 +794,7 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 			int x = nbt.getInteger("cpedx");
 			int y = nbt.getInteger("cpedy");
 			int z = nbt.getInteger("cpedz");
-			TileEntity te = worldObj == null ? null : worldObj.getBlockTileEntity(x, y, z);
+			TileEntity te = worldObj == null ? null : worldObj.getTileEntity(x, y, z);
 			if (te != null && te instanceof TilePedestal)
 				currentpedestal = (TilePedestal)te;
 		}

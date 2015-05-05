@@ -150,7 +150,7 @@ public class AdvThaum
 	    	 EtherealJar = new BlockEtherealJar();
 	    	 
 	     // Items
-	    	 itemEtherealJar = new ItemEtherealJar(); 
+	    	 itemEtherealJar = new ItemEtherealJar();
 	     }
 	     
 	     if (config.get("Feature Control", "enable_infused_thaumium", true).getBoolean(true))
@@ -182,8 +182,7 @@ public class AdvThaum
 	     LanguageRegistry.instance().addStringLocalization("tc.research_category.ADVTHAUM", "en_US", "Advanced Thaumaturgy");
 	     
 	     MinecraftForge.EVENT_BUS.register(new ATEventHandler());
-
-         FMLCommonHandler.instance().bus().register(new ArcingDamageManager());
+	     FMLCommonHandler.instance().bus().register(new ArcingDamageManager());
 	     
 	     ForgeChunkManager.setForcedChunkLoadingCallback(instance, new ChunkLoadingClass());
 	    

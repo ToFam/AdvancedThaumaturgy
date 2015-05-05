@@ -1,9 +1,10 @@
 package net.ixios.advancedthaumaturgy.models;
 
 import java.awt.Color;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.ReadableColor;
 
+import org.lwjgl.opengl.GL11;
+
+import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.tileentities.TileMicrolithBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
@@ -15,7 +16,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 public class ModelMinilith implements IModelContainer
 {
 	private ResourceLocation texture = new ResourceLocation("minecraft", "textures/blocks/obsidian.png");
-	private WavefrontObject model = (WavefrontObject)AdvancedModelLoader.loadModel("/assets/advthaum/models/minilith.obj");
+	private WavefrontObject model = (WavefrontObject)AdvancedModelLoader.loadModel(new ResourceLocation(AdvThaum.MODID, "models/minilith.obj"));
 	
 	@Override
 	public void render(TileEntity te)

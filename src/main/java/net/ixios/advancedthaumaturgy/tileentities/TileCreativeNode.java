@@ -50,6 +50,6 @@ public class TileCreativeNode extends TileNode
 	public NodeType getNodeType() { return NodeType.PURE; }
 
 	@Override
-	public int getNodeVisBase() { return 100; }
+	public int getNodeVisBase(Aspect aspect) { return 100; }
 	
 }

@@ -11,6 +11,7 @@ import thaumcraft.common.config.ConfigItems;
 import thaumcraft.common.items.ItemEssence;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.misc.Vector3F;
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -55,15 +56,15 @@ public class TileFluxDissipator extends TileMicrolithBase implements IAspectCont
 			{
 				for (int cz = zCoord - 12; cz < zCoord + 12; cz++)
 				{
-					int blockid = worldObj.getBlockId(cx, cy, cz);
+					Block block = worldObj.getBlock(cx, cy, cz);
 				
-					if (blockid == ConfigBlocks.blockFluxGoo.blockID)
+					if (block.equals(ConfigBlocks.blockFluxGoo))
 					{
 						worldObj.playSoundEffect(cx, cy, cz, "liquid.swim", 0.3F, 1.0F);
-						worldObj.setBlock(cx,  cy,  cz, ConfigBlocks.blockFluxGas.blockID);
+						worldObj.setBlock(cx,  cy,  cz, ConfigBlocks.blockFluxGas);
 						return;
 					}
-					else if (blockid == ConfigBlocks.blockFluxGas.blockID && tickcount % 60 == 0)
+					else if (block.equals(ConfigBlocks.blockFluxGas) && tickcount % 60 == 0)
 					{
 						Vector3F src = new Vector3F(xCoord + 0.5F, yCoord + 1F, zCoord + 0.5F);
 						
@@ -200,7 +201,7 @@ public class TileFluxDissipator extends TileMicrolithBase implements IAspectCont
 	        float hitY, float hitZ)
     {
 		ItemStack helditem = player.getHeldItem();
-	    TileEntity te = world.getBlockTileEntity(x,  y,  z);
+	    TileEntity te = world.getTileEntity(x,  y,  z);
 	    
 	    if (helditem == null || !(helditem.getItem() instanceof IEssentiaContainerItem))
 	    	return false;

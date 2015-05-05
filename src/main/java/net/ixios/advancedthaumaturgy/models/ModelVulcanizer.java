@@ -1,6 +1,7 @@
 package net.ixios.advancedthaumaturgy.models;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
@@ -10,7 +11,7 @@ public class ModelVulcanizer implements IModelContainer
 {
 	private ResourceLocation texturebase = new ResourceLocation("advthaum", "textures/models/thaum_melter2_base_tex.png");
 	private ResourceLocation texturebowl = new ResourceLocation("advthaum", "textures/models/thaum_melter2_bowl_tex.png");
-	private WavefrontObject model = (WavefrontObject)AdvancedModelLoader.loadModel("/assets/advthaum/models/thaum_melter2.obj");
+	private WavefrontObject model = (WavefrontObject)AdvancedModelLoader.loadModel(new ResourceLocation(AdvThaum.MODID, "models/thaum_melter2.obj"));
 		
 	public ModelVulcanizer()
 	{

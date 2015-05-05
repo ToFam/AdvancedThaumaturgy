@@ -1,14 +1,5 @@
 package net.ixios.advancedthaumaturgy.renderers;
 
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.client.lib.UtilsFX;
-import thaumcraft.common.blocks.BlockJar;
-import thaumcraft.common.blocks.ItemJarFilled;
-import thaumcraft.common.config.Config;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.tileentities.TileEtherealJar;
 import net.minecraft.block.Block;
@@ -17,8 +8,18 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
+
+import org.lwjgl.opengl.GL11;
+
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.client.lib.UtilsFX;
+import thaumcraft.common.blocks.BlockJar;
+import thaumcraft.common.blocks.ItemJarFilled;
+import thaumcraft.common.config.ConfigBlocks;
+import cpw.mods.fml.client.FMLClientHandler;
 
 public class ItemEtherealJarRenderer implements IItemRenderer
 {
@@ -155,7 +156,7 @@ public class ItemEtherealJarRenderer implements IItemRenderer
 	        int bright = 200;
 	        t.setBrightness(bright);
 	        
-	        Icon icon = ((BlockJar)Block.blocksList[Config.blockJarId]).iconLiquid;
+	        IIcon icon = ((BlockJar)ConfigBlocks.blockJar).iconLiquid;
 	        
 	        FMLClientHandler.instance().getClient().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 	        

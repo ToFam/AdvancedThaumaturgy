@@ -1,7 +1,6 @@
 package net.ixios.advancedthaumaturgy.misc;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.Iterator;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -10,40 +9,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import thaumcraft.common.items.wands.foci.ItemFocusShock;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class ArcingDamageManager implements ITickHandler
+public class ArcingDamageManager
 {
-
 	private static ArrayList<ArcData> instances = new ArrayList<ArcData>();
 	
 	public static void add(ArcData ad)
 	{
 		instances.add(ad);
 	}
-
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) { }
-
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) 
-	{
-		update();		
-	}
-
-	@Override
-	public EnumSet<TickType> ticks()
-	{
-		return EnumSet.of(TickType.WORLD);
-	}
-
-	@Override
-	public String getLabel() 
-	{
-		return "ArcDataManager";
-	}
 	
+	@SubscribeEvent
 	private static void update()
 	{
 		for(Iterator<ArcData> i = instances.iterator(); i.hasNext();)

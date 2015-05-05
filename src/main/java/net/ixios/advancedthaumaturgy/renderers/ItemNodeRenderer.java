@@ -1,11 +1,11 @@
 package net.ixios.advancedthaumaturgy.renderers;
 
-import net.ixios.advancedthaumaturgy.blocks.BlockCreativeNode;
-import net.minecraft.block.Block;
+import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.IItemRenderer;
@@ -14,9 +14,10 @@ import org.lwjgl.opengl.GL11;
 
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.nodes.*;
+import thaumcraft.api.nodes.INode;
+import thaumcraft.api.nodes.NodeType;
 import thaumcraft.client.lib.UtilsFX;
-import thaumcraft.common.config.Config;
+import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.tiles.TileNode;
 
 public class ItemNodeRenderer implements IItemRenderer
@@ -35,11 +36,13 @@ public class ItemNodeRenderer implements IItemRenderer
         aspects = (new AspectList()).add(Aspect.AIR, 40).add(Aspect.FIRE, 40).add(Aspect.EARTH, 40).add(Aspect.WATER, 40);
     }
 
-    public boolean handleRenderType(ItemStack item, net.minecraftforge.client.IItemRenderer.ItemRenderType type)
+    @Override
+    public boolean handleRenderType(ItemStack item, ItemRenderType type)
     {
-        return item != null && item.getItem().itemID == BlockCreativeNode.blockID && (item.getItemDamage() == 0 || item.getItemDamage() == 5);
+        return item != null && item.getItem().equals(Item.getItemFromBlock(AdvThaum.CreativeNode)) && (item.getItemDamage() == 0 || item.getItemDamage() == 5);
     }
 
+    @Override
     public boolean shouldUseRenderHelper(net.minecraftforge.client.IItemRenderer.ItemRenderType type, ItemStack item, net.minecraftforge.client.IItemRenderer.ItemRendererHelper helper)
     {
         return helper != IItemRenderer.ItemRendererHelper.EQUIPPED_BLOCK;
@@ -56,7 +59,7 @@ public class ItemNodeRenderer implements IItemRenderer
         TileNode tjf = new TileNode();
         tjf.setAspects(aspects);
         tjf.setNodeType(NodeType.NORMAL);
-        tjf.blockType = Block.blocksList[Config.blockAiryId];
+        tjf.blockType = ConfigBlocks.blockAiry;
         tjf.blockMetadata = 0;
         GL11.glPushMatrix();
         GL11.glTranslated(0.5D, 0.5D, 0.5D);
@@ -93,7 +96,7 @@ public class ItemNodeRenderer implements IItemRenderer
                     alpha *= MathHelper.sin((float)((Entity) (viewer)).ticksExisted / 3F) * 0.25F + 0.33F;
                     break;
                 }
-        }
+            }
             GL11.glPushMatrix();
             GL11.glAlphaFunc(516, 0.003921569F);
             GL11.glDepthMask(false);

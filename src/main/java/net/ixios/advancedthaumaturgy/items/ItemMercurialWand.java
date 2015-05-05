@@ -6,6 +6,7 @@ import java.util.List;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.items.ItemArcaneCrystal.Upgrades;
 import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
+import net.ixios.advancedthaumaturgy.misc.Utilities;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -363,19 +364,12 @@ public class ItemMercurialWand extends ItemWandCasting
     		{
     			AdvThaum.proxy.beginMonitoring(im);
     		}
-    		else if (im.active)
+    		else if (im.active && Utilities.isOp(player))
     		{
-    			if (player instanceof EntityPlayerMP)
-    			{
-    				EntityPlayerMP p = (EntityPlayerMP) player;
-        			if (FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152596_g(p.getGameProfile()))
-        			{
-            			int currinstability = ReflectionHelper.getPrivateValue(TileInfusionMatrix.class, im, "instability");
-        				ChatComponentText cc = new ChatComponentText("[OP Info]: Instability: " + currinstability);
-            			player.addChatMessage(cc);
-            			return true;
-        			}
-    			}
+    			int currinstability = ReflectionHelper.getPrivateValue(TileInfusionMatrix.class, im, "instability");
+				ChatComponentText cc = new ChatComponentText("[OP Info]: Instability: " + currinstability);
+    			player.addChatMessage(cc);
+    			return true;
     		}
     	}
     	

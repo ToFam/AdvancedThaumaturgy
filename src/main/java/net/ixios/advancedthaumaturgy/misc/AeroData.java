@@ -5,16 +5,16 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class AeroData
 {
-	public EntityPlayer player = null;
-	public Vector3 vector = null;
-	public int blockid = -1;
-	public int blockmeta = 0;
+	public EntityPlayer player;
+	public Vector3 vector;
+	public Block block;
+	public int blockmeta;
 	
-	public AeroData(EntityPlayer plr, Vector3 vec, int id, int meta)
+	public AeroData(EntityPlayer plr, Vector3 vec, Block block, int meta)
 	{
 		this.player = plr;
 		this.vector = vec;
-		this.blockid = id;
+		this.block = block;
 		this.blockmeta = meta;
 	}
 }

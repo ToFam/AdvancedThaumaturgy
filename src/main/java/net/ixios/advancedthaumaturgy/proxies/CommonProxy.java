@@ -1,30 +1,8 @@
 package net.ixios.advancedthaumaturgy.proxies;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.IGuiHandler;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.aspects.IAspectSource;
-import thaumcraft.api.wands.IWandFocus;
-import thaumcraft.client.fx.FXScorch;
-import thaumcraft.common.config.ConfigBlocks;
-import thaumcraft.common.items.wands.ItemWandCasting;
-import thaumcraft.common.tiles.TileInfusionMatrix;
-import thaumcraft.common.tiles.TileJarFillable;
-import thaumcraft.common.tiles.TilePedestal;
-import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.blocks.BlockEssentiaEngine;
-import net.ixios.advancedthaumaturgy.compat.energy.EnergyCompatBase;
 import net.ixios.advancedthaumaturgy.gui.ContainerNodeModifier;
 import net.ixios.advancedthaumaturgy.gui.GuiNodeModifier;
 import net.ixios.advancedthaumaturgy.misc.TickManager;
@@ -33,28 +11,31 @@ import net.ixios.advancedthaumaturgy.misc.Vector3F;
 import net.ixios.advancedthaumaturgy.tileentities.TileNodeModifier;
 import net.ixios.advancedthaumaturgy.tileentities.TileNodeModifier.Operation;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.aspects.IAspectSource;
+import thaumcraft.common.config.ConfigBlocks;
+import thaumcraft.common.tiles.TileInfusionMatrix;
+import thaumcraft.common.tiles.TilePedestal;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.IGuiHandler;
 
-public class CommonProxy implements IGuiHandler, IPacketHandler
+public class CommonProxy implements IGuiHandler
 {
 
-	private TickManager tickmanager = null;
+	private TickManager tickmanager;
 	
 	public void register()
 	{
 		tickmanager = new TickManager(); 
-		TickRegistry.registerTickHandler(tickmanager, Side.SERVER);
-		MinecraftForge.EVENT_BUS.register(tickmanager);
+		FMLCommonHandler.instance().bus().register(tickmanager);
 	}
 	
 	public void loadData()
@@ -127,14 +108,10 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
      * @param zrange Block range to search on the Z axis
      * @return First jar of essentia it finds that contains at least 1 of aspect specified
      */
-    
-
-
-
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
-		TileEntity te = world.getBlockTileEntity(x,  y,  z);
+		TileEntity te = world.getTileEntity(x,  y,  z);
 		switch (ID)
 		{
 			case GuiNodeModifier.id:
@@ -150,6 +127,7 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
 		return null;
 	}
 
+	/*
 	@Override
 	public void onPacketData(INetworkManager mgr, Packet250CustomPayload pkt, Player plr)
 	{
@@ -174,7 +152,7 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
 						
 					World world = ((EntityPlayer)plr).worldObj;
 					
-					TileNodeModifier nm = (TileNodeModifier) world.getBlockTileEntity(x, y, z);
+					TileNodeModifier nm = (TileNodeModifier) world.getTileEntity(x, y, z);
 					nm.startProcess(op);
 					
 				}
@@ -185,13 +163,13 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
 			}
 		}
 		catch (IOException io) { }
-	}
+	}*/
 	
 	public float getSymmetry(TileInfusionMatrix im)
 	{
-		ArrayList stuff = new ArrayList();
-		ArrayList sources = new ArrayList();
-		ArrayList pedestals = new ArrayList();
+		ArrayList<ChunkCoordinates> stuff = new ArrayList<ChunkCoordinates>();
+		ArrayList<ChunkCoordinates> sources = new ArrayList<ChunkCoordinates>();
+		ArrayList<ChunkCoordinates> pedestals = new ArrayList<ChunkCoordinates>();
 
         for (int xx = -12; xx <= 12; xx++)
         {
@@ -205,7 +183,7 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
                     int x = im.xCoord + xx;
                     int y = im.yCoord - yy;
                     int z = im.zCoord + zz;
-                    TileEntity te = im.worldObj.getBlockTileEntity(x, y, z);
+                    TileEntity te = im.getWorldObj().getTileEntity(x, y, z);
                     if (!skip && yy > 0 && Math.abs(xx) <= 8 && Math.abs(zz) <= 8 && te != null && (te instanceof TilePedestal))
                     {
                         pedestals.add(new ChunkCoordinates(x, y, z));
@@ -217,8 +195,9 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
                         sources.add(new ChunkCoordinates(x, y, z));
                         continue;
                     }
-                    int bi = im.worldObj.getBlockId(x, y, z);
-                    if (bi == ConfigBlocks.blockCandle.blockID || bi == ConfigBlocks.blockAiry.blockID || bi == ConfigBlocks.blockCrystal.blockID || bi == Block.skull.blockID)
+                    Block bi= im.getWorldObj().getBlock(x, y, z);
+                    if (bi.equals(ConfigBlocks.blockCandle) || bi.equals(ConfigBlocks.blockAiry) 
+                    		|| bi.equals(ConfigBlocks.blockCrystal) || bi.equals(Blocks.skull))
                         stuff.add(new ChunkCoordinates(x, y, z));
                 }
 
@@ -227,16 +206,16 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
         }
 
         float symmetry = 0;
-        Iterator i = pedestals.iterator();
+        Iterator<ChunkCoordinates> i = pedestals.iterator();
         do
         {
             if(!i.hasNext())
                 break;
-            ChunkCoordinates cc = (ChunkCoordinates)i.next();
+            ChunkCoordinates cc = i.next();
             boolean items = false;
             int x = im.xCoord - cc.posX;
             int z = im.zCoord - cc.posZ;
-            TileEntity te = im.worldObj.getBlockTileEntity(cc.posX, cc.posY, cc.posZ);
+            TileEntity te = im.getWorldObj().getTileEntity(cc.posX, cc.posY, cc.posZ);
             if (te != null && (te instanceof TilePedestal))
             {
                 symmetry += 2;
@@ -251,7 +230,7 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
             
             int xx = im.xCoord + x;
             int zz = im.zCoord + z;
-            te = im.worldObj.getBlockTileEntity(xx, cc.posY, zz);
+            te = im.getWorldObj().getTileEntity(xx, cc.posY, zz);
             
             if (te != null && (te instanceof TilePedestal))
             {
@@ -274,14 +253,13 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
             if(!i.hasNext())
                 break;
             ChunkCoordinates cc = (ChunkCoordinates)i.next();
-            boolean items = false;
             
             int x = im.xCoord - cc.posX;
             int z = im.zCoord - cc.posZ;
             
-            int bi = im.worldObj.getBlockId(cc.posX, cc.posY, cc.posZ);
+            Block bi = im.getWorldObj().getBlock(cc.posX, cc.posY, cc.posZ);
             
-            if (bi == ConfigBlocks.blockCandle.blockID || bi == ConfigBlocks.blockAiry.blockID || bi == ConfigBlocks.blockCrystal.blockID || bi == Block.skull.blockID)
+            if (bi.equals(ConfigBlocks.blockCandle) || bi.equals(ConfigBlocks.blockAiry) || bi.equals(ConfigBlocks.blockCrystal) || bi.equals(Blocks.skull))
             {
             	//AdvThaum.log("Adding +0.1f symmmetry because bi is a " + Block.blocksList[bi].getLocalizedName());
                 sym += 0.1F;
@@ -290,9 +268,9 @@ public class CommonProxy implements IGuiHandler, IPacketHandler
             int xx = im.xCoord + x;
             int zz = im.zCoord + z;
             
-            bi = im.worldObj.getBlockId(xx, cc.posY, zz);
+            bi = im.getWorldObj().getBlock(xx, cc.posY, zz);
             
-            if (bi == ConfigBlocks.blockCandle.blockID || bi == ConfigBlocks.blockAiry.blockID || bi == ConfigBlocks.blockCrystal.blockID || bi == Block.skull.blockID)
+            if (bi.equals(ConfigBlocks.blockCandle) || bi.equals(ConfigBlocks.blockAiry) || bi.equals(ConfigBlocks.blockCrystal) || bi.equals(Blocks.skull))
             {
             	//AdvThaum.log("Removing -0.2f symmmetry because bi is a " + Block.blocksList[bi].getLocalizedName());
                 sym -= 0.2F;

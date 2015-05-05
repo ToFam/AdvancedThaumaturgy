@@ -14,6 +14,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ItemAeroSphere extends Item
 {
+	public final static int RADIUS = 6;
 
 	public ItemAeroSphere()
     {
@@ -76,7 +77,7 @@ public class ItemAeroSphere extends Item
 	    			Block block = world.getBlock(blockpos.x, blockpos.y, blockpos.z);
 	    			if (block == null || block.equals(AdvThaum.Placeholder))
 	    				continue;
-	    			if (plrpos.distanceTo(blockpos) <= 6 && world.getBlock(cx, cy,  cz).getMaterial().isLiquid())
+	    			if (plrpos.distanceTo(blockpos) <= RADIUS && world.getBlock(cx, cy,  cz).getMaterial().isLiquid())
     				{
 	    				AdvThaum.proxy.beginMonitoring(player, blockpos, block);			
     				}
