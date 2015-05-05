@@ -4,10 +4,10 @@ import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.Optional.Method;
 
 @Optional.InterfaceList({ })
-public class BCCompatChecker extends EnergyCompatBase 
+public class RFCompatChecker extends EnergyCompatBase 
 {
 	
-	@Method(modid = "BuildCraft|Energy")
+	@Method(modid = "CoFHLib")
 	@Override
 	public void register()
 	{

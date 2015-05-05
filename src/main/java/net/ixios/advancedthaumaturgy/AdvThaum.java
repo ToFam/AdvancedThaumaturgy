@@ -9,7 +9,7 @@ import net.ixios.advancedthaumaturgy.blocks.BlockNodeModifier;
 import net.ixios.advancedthaumaturgy.blocks.BlockPlaceholder;
 import net.ixios.advancedthaumaturgy.blocks.BlockThaumicFertilizer;
 import net.ixios.advancedthaumaturgy.blocks.BlockThaumicVulcanizer;
-import net.ixios.advancedthaumaturgy.compat.energy.BCCompatChecker;
+import net.ixios.advancedthaumaturgy.compat.energy.RFCompatChecker;
 import net.ixios.advancedthaumaturgy.compat.energy.EnergyCompatBase;
 import net.ixios.advancedthaumaturgy.items.ItemAeroSphere;
 import net.ixios.advancedthaumaturgy.items.ItemArcaneCrystal;
@@ -51,6 +51,7 @@ import thaumcraft.api.wands.WandRod;
 import thaumcraft.api.wands.WandTriggerRegistry;
 import thaumcraft.common.Thaumcraft;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -181,7 +182,8 @@ public class AdvThaum
 	     ////////////////////////////////////////////////////////
 	  
 	     // these must be done before proxy.register
-		 new BCCompatChecker().register();
+	     if (Loader.isModLoaded("CoFHLib"))
+	    	 new RFCompatChecker().register();
 	
 		 if (config.get("Feature Control", "force_enable_essentia_engine", false).getBoolean(false))
 			 EnergyCompatBase.forceEnable();
