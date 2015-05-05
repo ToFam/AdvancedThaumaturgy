@@ -16,18 +16,19 @@ import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.IEssentiaTransport;
 import thaumcraft.client.fx.bolt.FXLightningBolt;
 import thaumcraft.common.tiles.TileJarFillable;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import cpw.mods.fml.common.Optional;
 //import cpw.mods.fml.common.Optional.Method;
 import cpw.mods.fml.common.Optional.Method;
 
 @Optional.InterfaceList({
-	@Optional.Interface(modid = "BuildCraft|Energy", iface = "IPipeConnection"), 
-	@Optional.Interface(modid = "BuildCraft|Energy", iface = "IPowerEmitter")})
-public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPipeConnection
+	@Optional.Interface(modid = "CoFHLib", iface = "IEnergyProvider"),
+    @Optional.Interface(modid = "CoFHLib", iface = "IEnergyConnection")})
+public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, IEnergyConnection
 {
-	//private final double costperRF = 1D / x;
-	//private final double costperEU = 1D / 4000D;
-	private final double costperMJ = 1D / 1800D;
+	private final double costperRF = 1D / 18000D;
 
 	private Aspect curraspect = null;
 	private float energy = 0.0F;
@@ -49,7 +50,7 @@ public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPi
 		
 		aspectvalues.put(Aspect.TREE, 0.25F);
 		aspectvalues.put(Aspect.PLANT, 0.25F);
-		aspectvalues.put(Aspect.STONE, 0.25F);
+		//aspectvalues.put(Aspect.STONE, 0.25F);
 		aspectvalues.put(Aspect.ENERGY, 2.0F);
 		
 	}
@@ -157,14 +158,13 @@ public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPi
 		{
 			TileEntity tile = worldObj.getTileEntity(xCoord + orientation.offsetX, yCoord + orientation.offsetY, zCoord + orientation.offsetZ);
 			
-			if (tile != null && isPoweredTile(tile, orientation))
+			if (tile != null && tile instanceof IEnergyReceiver)
 			{
-				PowerReceiver receptor = ((IPowerReceptor) tile).getPowerReceiver(orientation.getOpposite());
-	
-				float allowed = 10;
-					
-				float needed = receptor.receiveEnergy(PowerHandler.Type.ENGINE, allowed, orientation.getOpposite());
-				double cost = (costperMJ * needed);
+				IEnergyReceiver receptor = (IEnergyReceiver) tile;
+				int allowed = 10;
+				
+				float needed = receptor.receiveEnergy(orientation.getOpposite(), allowed, false);
+				double cost = (costperRF * needed);
 				
 				energy -= cost;
 				
@@ -177,40 +177,11 @@ public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPi
 		}
 	}
 	
-	public boolean isPoweredTile(TileEntity tile, ForgeDirection side)
-	{
-		if (tile instanceof IPowerReceptor)
-			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-
-		return false;
-	}
-	
 	private boolean hasEssentiaTubeConnection()
 	{
 		TileEntity te = worldObj.getTileEntity(xCoord, yCoord + 1, zCoord);
 		return (te instanceof IEssentiaTransport);
 	}
-	
-	
-	
-	@Method(modid = "BuildCraft|Energy")
-	@Override
-	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with)
-	{
-		if (type != PipeType.POWER)
-			return ConnectOverride.DISCONNECT;
-		else
-			return ConnectOverride.CONNECT;
-	}
-
-	@Method(modid = "BuildCraft|Energy")
-	@Override
-	public boolean canEmitPowerFrom(ForgeDirection side) 
-	{
-		return (side != ForgeDirection.DOWN);
-	}
-
-
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
@@ -231,7 +202,6 @@ public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPi
 		nbt.setFloat("energy", energy);
 		nbt.setBoolean("active", currentlyactive);
 	}
-
 	
 	@Override
 	public Packet getDescriptionPacket()
@@ -245,6 +215,30 @@ public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPi
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
 	{
 		readFromNBT(pkt.func_148857_g());
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return true;
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+			boolean simulate) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	
