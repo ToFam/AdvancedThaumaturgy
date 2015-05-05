@@ -1,9 +1,17 @@
 package net.ixios.advancedthaumaturgy.tileentities;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import net.ixios.advancedthaumaturgy.AdvThaum;
+import net.ixios.advancedthaumaturgy.misc.Utilities;
+import net.ixios.advancedthaumaturgy.misc.Vector3F;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IAspectContainer;
@@ -14,16 +22,6 @@ import thaumcraft.common.items.ItemWispEssence;
 import thaumcraft.common.tiles.TileJarFillable;
 import thaumcraft.common.tiles.TileJarNode;
 import thaumcraft.common.tiles.TilePedestal;
-import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.fx.FloatyLineFX;
-import net.ixios.advancedthaumaturgy.misc.Utilities;
-import net.ixios.advancedthaumaturgy.misc.Vector3F;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
-import net.minecraft.tileentity.TileEntity;
 
 public class TileNodeModifier extends TileEntity implements IAspectContainer
 {
@@ -738,15 +736,15 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 	@Override
 	public Packet getDescriptionPacket()
 	{
-	    NBTTagCompound nbt = new NBTTagCompound();
-	    this.writeToNBT(nbt);
-	    return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, nbt);
+		NBTTagCompound nbt = new NBTTagCompound();
+		writeToNBT(nbt);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, nbt);
 	}
 	
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
 	{
-	    this.readFromNBT(pkt.data);
+		readFromNBT(pkt.func_148857_g());
 	}
 	
 	@Override

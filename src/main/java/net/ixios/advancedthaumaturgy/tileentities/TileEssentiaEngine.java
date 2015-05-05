@@ -2,29 +2,20 @@ package net.ixios.advancedthaumaturgy.tileentities;
 
 import java.util.HashMap;
 
-import thaumcraft.api.ThaumcraftApiHelper;
-import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
-import thaumcraft.api.aspects.IAspectContainer;
-import thaumcraft.api.aspects.IEssentiaTransport;
-import thaumcraft.client.fx.FXLightningBolt;
-import thaumcraft.common.tiles.TileJarFillable;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.misc.Utilities;
 import net.ixios.advancedthaumaturgy.misc.Vector3F;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeTile.PipeType;
+import net.minecraftforge.common.util.ForgeDirection;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.IEssentiaTransport;
+import thaumcraft.client.fx.bolt.FXLightningBolt;
+import thaumcraft.common.tiles.TileJarFillable;
 import cpw.mods.fml.common.Optional;
 //import cpw.mods.fml.common.Optional.Method;
 import cpw.mods.fml.common.Optional.Method;
@@ -164,7 +155,7 @@ public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPi
 
 		for (ForgeDirection orientation : ForgeDirection.values())
 		{
-			TileEntity tile = worldObj.getBlockTileEntity(xCoord + orientation.offsetX, yCoord + orientation.offsetY, zCoord + orientation.offsetZ);
+			TileEntity tile = worldObj.getTileEntity(xCoord + orientation.offsetX, yCoord + orientation.offsetY, zCoord + orientation.offsetZ);
 			
 			if (tile != null && isPoweredTile(tile, orientation))
 			{
@@ -196,7 +187,7 @@ public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPi
 	
 	private boolean hasEssentiaTubeConnection()
 	{
-		TileEntity te = worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord);
+		TileEntity te = worldObj.getTileEntity(xCoord, yCoord + 1, zCoord);
 		return (te instanceof IEssentiaTransport);
 	}
 	
@@ -240,19 +231,20 @@ public class TileEssentiaEngine extends TileEntity implements IPowerEmitter, IPi
 		nbt.setFloat("energy", energy);
 		nbt.setBoolean("active", currentlyactive);
 	}
+
 	
 	@Override
 	public Packet getDescriptionPacket()
 	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		writeToNBT(nbt);
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, nbt);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, nbt);
 	}
 	
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
 	{
-		readFromNBT(pkt.data);
+		readFromNBT(pkt.func_148857_g());
 	}
 
 	

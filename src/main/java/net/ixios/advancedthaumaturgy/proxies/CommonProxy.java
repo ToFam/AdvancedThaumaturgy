@@ -108,6 +108,8 @@ public class CommonProxy implements IGuiHandler
      * @param zrange Block range to search on the Z axis
      * @return First jar of essentia it finds that contains at least 1 of aspect specified
      */
+    
+    
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
@@ -126,44 +128,6 @@ public class CommonProxy implements IGuiHandler
 		}
 		return null;
 	}
-
-	/*
-	@Override
-	public void onPacketData(INetworkManager mgr, Packet250CustomPayload pkt, Player plr)
-	{
-		if (!pkt.channel.equals("AdvThaum"))
-			return;
-		
-		ByteArrayInputStream b = new ByteArrayInputStream(pkt.data);
-		DataInputStream in = new DataInputStream(b);
-		
-		try
-		{
-			int opcode = in.readByte();
-			
-			switch (opcode)
-			{
-				case 1: // start node modification
-				{
-					int x = in.readInt();
-					int y = in.readInt();
-					int z = in.readInt();
-					Operation op = Operation.parse(in.readByte());
-						
-					World world = ((EntityPlayer)plr).worldObj;
-					
-					TileNodeModifier nm = (TileNodeModifier) world.getTileEntity(x, y, z);
-					nm.startProcess(op);
-					
-				}
-				break;
-				
-				default:
-					break;
-			}
-		}
-		catch (IOException io) { }
-	}*/
 	
 	public float getSymmetry(TileInfusionMatrix im)
 	{

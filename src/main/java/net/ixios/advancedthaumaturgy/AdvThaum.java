@@ -25,12 +25,12 @@ import net.ixios.advancedthaumaturgy.misc.ATEventHandler;
 import net.ixios.advancedthaumaturgy.misc.ATServerCommand;
 import net.ixios.advancedthaumaturgy.misc.ArcingDamageManager;
 import net.ixios.advancedthaumaturgy.misc.ChunkLoadingClass;
+import net.ixios.advancedthaumaturgy.network.PacketStartNodeModification;
 import net.ixios.advancedthaumaturgy.proxies.CommonProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -61,7 +61,9 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid=AdvThaum.MODID, version=AdvThaum.VERSION, name=AdvThaum.NAME, 
 	dependencies="required-after:Thaumcraft", acceptedMinecraftVersions=AdvThaum.MC_VERSION)
@@ -81,6 +83,8 @@ public class AdvThaum
 	@SidedProxy(clientSide="net.ixios.advancedthaumaturgy.proxies.ClientProxy",
 				serverSide="net.ixios.advancedthaumaturgy.proxies.CommonProxy")
 	public static CommonProxy proxy;
+	
+	public static SimpleNetworkWrapper channel;
 	
 	public static CreativeTabs tabAdvThaum = new ATCreativeTab("advthaum");
 	public static Configuration config = null;
@@ -108,13 +112,19 @@ public class AdvThaum
 	public static BlockMicrolith Microlith;
 	public static BlockAltarDeployer AltarDeployer;
 	
-	
 	public static boolean debug = false;
+	 
+	public static void log(String text)
+	{
+	    logger.info(FMLCommonHandler.instance().getEffectiveSide().toString() + " " + text);
+	}
 	
 	 @EventHandler
      public void preInit(FMLPreInitializationEvent event)
 	 {
 	     NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);
+	     channel = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
+	     channel.registerMessage(PacketStartNodeModification.Handler.class, PacketStartNodeModification.class, 1, Side.SERVER);
 
 	     Placeholder = new BlockPlaceholder(Material.air);
 	     
@@ -226,11 +236,6 @@ public class AdvThaum
 		 if (AltarDeployer != null)
 			 AltarDeployer.register();
 		 
-	 }
-	 
-	 public static void log(String text)
-	 {
-	     logger.info(FMLCommonHandler.instance().getEffectiveSide().toString() + " " + text);
 	 }
 	 
 	 @EventHandler

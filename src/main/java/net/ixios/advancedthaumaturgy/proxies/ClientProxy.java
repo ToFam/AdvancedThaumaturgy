@@ -1,17 +1,8 @@
 package net.ixios.advancedthaumaturgy.proxies;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.blocks.BlockCreativeNode;
-import net.ixios.advancedthaumaturgy.blocks.BlockEssentiaEngine;
-import net.ixios.advancedthaumaturgy.blocks.BlockMicrolith;
-import net.ixios.advancedthaumaturgy.blocks.BlockNodeModifier;
-import net.ixios.advancedthaumaturgy.blocks.BlockPlaceholder;
-import net.ixios.advancedthaumaturgy.blocks.BlockThaumicVulcanizer;
 import net.ixios.advancedthaumaturgy.compat.energy.EnergyCompatBase;
 import net.ixios.advancedthaumaturgy.fx.ColorableSparkleFX;
 import net.ixios.advancedthaumaturgy.fx.CustomParticleFX;
@@ -24,6 +15,7 @@ import net.ixios.advancedthaumaturgy.models.ModelFertilizer;
 import net.ixios.advancedthaumaturgy.models.ModelMinilith;
 import net.ixios.advancedthaumaturgy.models.ModelNodeModifier;
 import net.ixios.advancedthaumaturgy.models.ModelVulcanizer;
+import net.ixios.advancedthaumaturgy.network.PacketStartNodeModification;
 import net.ixios.advancedthaumaturgy.renderers.BlockEtherealJarRenderer;
 import net.ixios.advancedthaumaturgy.renderers.GenericRenderer;
 import net.ixios.advancedthaumaturgy.renderers.ItemEtherealJarRenderer;
@@ -51,7 +43,6 @@ import thaumcraft.client.renderers.item.ItemWandRenderer;
 import thaumcraft.common.Thaumcraft;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class ClientProxy extends CommonProxy
 {
@@ -223,26 +214,7 @@ public class ClientProxy extends CommonProxy
     {
     	super.startModification(nm, op);
     	
-    	ByteArrayOutputStream b = new ByteArrayOutputStream();
-    	DataOutputStream out = new DataOutputStream (b);
-    	
-    	try
-    	{
-	    	out.writeByte(1);
-	    	out.writeInt(nm.xCoord);
-	    	out.writeInt(nm.yCoord);
-	    	out.writeInt(nm.zCoord);
-	    	out.writeByte(op.getId());
-	    	
-	    	Packet250CustomPayload pkt = new Packet250CustomPayload();
-	    	pkt.channel = "AdvThaum";
-	    	pkt.length = out.size();
-	    	pkt.data = b.toByteArray();
-	    	
-	    	PacketDispatcher.sendPacketToServer(pkt);
-
-    	}
-    	catch (IOException io) { }
+    	AdvThaum.channel.sendToServer(new PacketStartNodeModification(nm.xCoord, nm.yCoord, nm.zCoord, op));
     }
 
     @Override

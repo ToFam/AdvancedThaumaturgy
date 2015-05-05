@@ -18,7 +18,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.BiomeDictionary;
@@ -307,20 +309,20 @@ public class TileThaumicFertilizer extends TileEntity implements IAspectContaine
         aspects = new AspectList();
         aspects.readFromNBT(nbt);
     }
- 
-    @Override
-    public Packet getDescriptionPacket()
-    {
-        NBTTagCompound nbt = new NBTTagCompound();
-        this.writeToNBT(nbt);
-        return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, nbt);
-    }
-    
-    @Override
-    public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
-    {
-        this.readFromNBT(pkt.data);
-    }
+
+	@Override
+	public Packet getDescriptionPacket()
+	{
+		NBTTagCompound nbt = new NBTTagCompound();
+		writeToNBT(nbt);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, nbt);
+	}
+	
+	@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+	{
+		readFromNBT(pkt.func_148857_g());
+	}
 
 	@Override
 	public int addToContainer(Aspect aspect, int amount)
