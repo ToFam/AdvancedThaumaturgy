@@ -68,7 +68,6 @@ import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid=AdvThaum.MODID, version=AdvThaum.VERSION, name=AdvThaum.NAME, 
 	dependencies="required-after:Thaumcraft", acceptedMinecraftVersions=AdvThaum.MC_VERSION)
-
 public class AdvThaum 
 {
 	public final static String MODID = "advthaum";
@@ -132,6 +131,13 @@ public class AdvThaum
 	     config = new Configuration(event.getSuggestedConfigurationFile());
 	     config.load();
 	     
+	     // Check if RF api is enabled
+	     if (Loader.isModLoaded("CoFHLib"))
+	    	 new RFCompatChecker().register();
+	
+		 if (config.get("Feature Control", "force_enable_essentia_engine", false).getBoolean(false))
+			 EnergyCompatBase.forceEnable();
+	     
 	     ////////////////////////////////////////////////////////
 	 	     
 	     // Blocks
@@ -150,7 +156,7 @@ public class AdvThaum
 	     if (config.get("Feature Control", "enable_miniligh", true).getBoolean(true))
 	    	 Microlith = new BlockMicrolith(Material.ground);
 
-	     if (AdvThaum.config.get("Feature Control", "enable_engine", true).getBoolean(true))
+	     if (AdvThaum.config.get("Feature Control", "enable_engine", true).getBoolean(true) && EnergyCompatBase.isPresent())
 	    	 AdvThaum.EssentiaEngine = new BlockEssentiaEngine(Material.rock);
 
 	     if (config.get("Feature Control", "enable_creative_node", true).getBoolean(true))
@@ -180,13 +186,6 @@ public class AdvThaum
 	     }
 
 	     ////////////////////////////////////////////////////////
-	  
-	     // these must be done before proxy.register
-	     if (Loader.isModLoaded("CoFHLib"))
-	    	 new RFCompatChecker().register();
-	
-		 if (config.get("Feature Control", "force_enable_essentia_engine", false).getBoolean(false))
-			 EnergyCompatBase.forceEnable();
 	
 	     proxy.register();
 	  

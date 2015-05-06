@@ -14,6 +14,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
+
 repositories {
     maven { // the repo from which to get NEI and stuff
         name 'CB Repo'
@@ -24,15 +25,21 @@ repositories {
         url "http://mobiusstrip.eu/maven"
     }
 }
+
 apply plugin: 'forge'
 
-version = "0.0.26"
+version = at_version + "-" + at_build
 group= "net.ixios.advancedthaumaturgy" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "AdvancedThaumaturgy"
 
 minecraft {
-    version = "1.7.10-10.13.2.1291"
-    runDir = "minecraft"
+    version = minecraft_version + "-" + forge_version
+    
+    replaceIn "AdvThaum.java"
+    replace "@version@", project.version
+    replace "@mc_version@", minecraft_version
+    
+    runDir = "../run"
 }
 
 dependencies {
@@ -46,7 +53,7 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    //i put these in purely for convenience
+    
     compile "codechicken:CodeChickenLib:1.7.10-1.1.1.106:dev"
     compile "codechicken:CodeChickenCore:1.7.10-1.0.4.29:dev"
     compile "mcp.mobius.waila:Waila:1.5.3a_1.7.10"

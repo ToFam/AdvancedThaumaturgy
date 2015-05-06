@@ -30,10 +30,13 @@ import thaumcraft.api.crafting.ShapedArcaneRecipe;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.common.config.ConfigResearch;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+@Optional.Interface(modid = BlockMicrolith.WAILA_MODID, iface = "mcp.mobius.waila.api.IWailaBlock", striprefs = true)
 public class BlockMicrolith extends BlockContainer implements IWailaBlock
 {
+	public static final String WAILA_MODID = "WailaAPI";
 	public static int renderID;
 	
     public BlockMicrolith(Material material)
@@ -220,6 +223,7 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
 	    return 12;
 	}
 	
+	@Optional.Method(modid = WAILA_MODID)
 	@Override
     public ItemStack getWailaStack(IWailaDataAccessor accessor,
             IWailaConfigHandler config)
@@ -228,6 +232,7 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
 	    return null;
     }
 
+	@Optional.Method(modid = WAILA_MODID)
 	@Override
     public List<String> getWailaHead(ItemStack stack, List<String> currenttip, IWailaDataAccessor accessor,
             IWailaConfigHandler config)
@@ -238,6 +243,7 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
 	    return currenttip;
     }
 
+	@Optional.Method(modid = WAILA_MODID)
 	@Override
     public List<String> getWailaBody(ItemStack itemStack,
             List<String> currenttip, IWailaDataAccessor accessor,
@@ -246,6 +252,7 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
 	    return currenttip;
     }
 
+	@Optional.Method(modid = WAILA_MODID)
 	@Override
     public List<String> getWailaTail(ItemStack itemStack,
             List<String> currenttip, IWailaDataAccessor accessor,
