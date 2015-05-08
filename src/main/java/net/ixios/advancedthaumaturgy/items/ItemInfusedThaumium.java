@@ -9,12 +9,12 @@ public class ItemInfusedThaumium extends Item
 
 	public ItemInfusedThaumium()
 	{
+		setUnlocalizedName("infusedThaumium");
 	}
 
 	public void register()
 	{
-		GameRegistry.registerItem(this, "InfusedThaumium");
-		LanguageRegistry.addName(this, "Infused Thaumium");
+		GameRegistry.registerItem(this, getUnlocalizedName());
 		
 		/*ItemStack quicksilver = new ItemStack(ConfigItems.itemResource, 1, 3);
 		ItemStack thaumiumblock = new ItemStack(ConfigBlocks.blockCosmeticSolid.blockID, 1, 4);*/

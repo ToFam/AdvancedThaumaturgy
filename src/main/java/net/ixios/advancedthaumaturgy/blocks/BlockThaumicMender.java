@@ -14,7 +14,8 @@ public class BlockThaumicMender extends BlockContainer
 	protected BlockThaumicMender()
 	{
 		super(Material.rock);
-		this.setCreativeTab(AdvThaum.tabAdvThaum);
+		setCreativeTab(AdvThaum.tabAdvThaum);
+		setBlockName("blockThaumicMender");
 	}
 
 	@Override

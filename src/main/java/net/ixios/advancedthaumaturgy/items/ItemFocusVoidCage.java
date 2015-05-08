@@ -29,12 +29,12 @@ public class ItemFocusVoidCage extends ItemFocusBasic
 	public ItemFocusVoidCage()
     {
 	    cost = new AspectList().add(Aspect.ORDER, 5000).add(Aspect.ENTROPY, 5000);
-	    setUnlocalizedName("at.voidcage");
+	    setUnlocalizedName("voidcage");
     }
 
 	public void register()
 	{
-		GameRegistry.registerItem(this, "focusvoidcage");
+		GameRegistry.registerItem(this, getUnlocalizedName());
 		setCreativeTab(AdvThaum.tabAdvThaum);
 		
 		// research

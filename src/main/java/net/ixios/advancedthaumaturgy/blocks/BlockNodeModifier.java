@@ -43,13 +43,14 @@ public class BlockNodeModifier extends BlockContainer implements IWandable
 	public BlockNodeModifier(Material material)
 	{
 		super(material);
-		this.setHardness(1.0F);
+		setHardness(1.0F);
+		setBlockName("blockNodeModifier");
 	    renderID = RenderingRegistry.getNextAvailableRenderId();
 	}
 
 	public void register()
 	{
-		GameRegistry.registerBlock(this, ItemNodeModifier.class, "blockNodeModifier");
+		GameRegistry.registerBlock(this, ItemNodeModifier.class, getUnlocalizedName());
 		GameRegistry.registerTileEntity(TileNodeModifier.class, "tileentityNodeModifier");
 		this.setCreativeTab(AdvThaum.tabAdvThaum);
 		

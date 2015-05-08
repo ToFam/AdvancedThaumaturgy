@@ -20,7 +20,7 @@ public class ItemEtherealJar extends ItemJarFilled
 	public ItemEtherealJar()
 	{
 		this.setMaxStackSize(4);
-		this.setUnlocalizedName("at.etherealjar");
+		this.setUnlocalizedName("etherealjar");
 	}
 
 	@Override

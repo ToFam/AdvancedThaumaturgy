@@ -17,14 +17,15 @@ public class BlockCreativeNode extends BlockAiry
 	
 	public BlockCreativeNode()
 	{
-		this.setCreativeTab(AdvThaum.tabAdvThaum);
-		this.setBlockUnbreakable();
+		setCreativeTab(AdvThaum.tabAdvThaum);
+		setBlockUnbreakable();
+		setBlockName("blockCreativeNode");
 		renderID = RenderingRegistry.getNextAvailableRenderId();
 	}
 
 	public void register()
 	{
-		GameRegistry.registerBlock(this, ItemCreativeNode.class, "blockCreativeNode");
+		GameRegistry.registerBlock(this, ItemCreativeNode.class, getUnlocalizedName());
 		GameRegistry.registerTileEntity(TileCreativeNode.class, "tileentityCreativeNode");
 	}
 	

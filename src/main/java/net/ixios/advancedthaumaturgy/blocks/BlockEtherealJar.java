@@ -33,6 +33,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockEtherealJar extends BlockJar
 {   
+	public BlockEtherealJar()
+	{
+		setBlockName("blockEtherealJar");
+	}
+	
     @Override
     public TileEntity createTileEntity(World world, int metadata)
     {
@@ -41,7 +46,7 @@ public class BlockEtherealJar extends BlockJar
     
     public void register()
     {
-    	GameRegistry.registerBlock(this, "blockEtherealJar");
+    	GameRegistry.registerBlock(this, getUnlocalizedName());
     	GameRegistry.registerTileEntity(TileEtherealJar.class, "tileEtherealJar");
     	AdvThaum.itemEtherealJar.setCreativeTab(AdvThaum.tabAdvThaum);
     	

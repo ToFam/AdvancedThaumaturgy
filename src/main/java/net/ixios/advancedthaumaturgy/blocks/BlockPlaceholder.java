@@ -15,7 +15,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -26,13 +25,13 @@ public class BlockPlaceholder extends Block implements ITileEntityProvider
 	public BlockPlaceholder(Material material)
 	{
 		super(material);
+		setBlockName("blockPlaceholder");
 		renderID = RenderingRegistry.getNextAvailableRenderId();
 	}
 
 	public void register()
 	{
-		GameRegistry.registerBlock(this, "blockPlaceholder");
-		LanguageRegistry.addName(this, "Block Placeholder");
+		GameRegistry.registerBlock(this, getUnlocalizedName());	
 	}
 	
 	@Override
@@ -47,6 +46,7 @@ public class BlockPlaceholder extends Block implements ITileEntityProvider
 		return false;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list,
 	        Entity entity)

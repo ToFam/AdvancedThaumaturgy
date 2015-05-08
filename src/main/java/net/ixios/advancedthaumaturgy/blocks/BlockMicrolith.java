@@ -43,9 +43,9 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
     {
     	super(material);
         renderID = RenderingRegistry.getNextAvailableRenderId();
-        this.setCreativeTab(AdvThaum.tabAdvThaum);
-        this.setHardness(1.0f);
-        
+        setCreativeTab(AdvThaum.tabAdvThaum);
+        setHardness(1.0f);
+        setBlockName("blockMicrolith");
     }
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -78,7 +78,7 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
 	 
     public void register()
     {
-    	GameRegistry.registerBlock(this, ItemMicrolith.class, "blockMicrolith");
+    	GameRegistry.registerBlock(this, ItemMicrolith.class, getUnlocalizedName());
     	
     	GameRegistry.registerTileEntity(TileFluxDissipator.class, "tileFluxDissipator");
     	GameRegistry.registerTileEntity(TileWatchfulMicrolith.class, "tileWatchfulMicrolith");

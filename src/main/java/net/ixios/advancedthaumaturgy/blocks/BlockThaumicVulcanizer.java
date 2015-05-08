@@ -24,13 +24,14 @@ public class BlockThaumicVulcanizer extends BlockContainer
 	public BlockThaumicVulcanizer(Material material)
 	{
 		super(material);
-		this.setCreativeTab(AdvThaum.tabAdvThaum);
+		setCreativeTab(AdvThaum.tabAdvThaum);
+		setBlockName("blockThaumicVulcanizer");
 	    renderID = RenderingRegistry.getNextAvailableRenderId();
 	}
 
 	public void register()
 	{
-		GameRegistry.registerBlock(this, "blockThaumicVulcanizer");
+		GameRegistry.registerBlock(this, getUnlocalizedName());
 		GameRegistry.registerTileEntity(TileVulcanizer.class, "tileVulcanizer");
 		
         

@@ -54,12 +54,12 @@ public class ItemArcaneCrystal extends Item
 	public ItemArcaneCrystal()
     {
 	    setHasSubtypes(true);
-	    setUnlocalizedName("at.arcanecrystal");
+	    setUnlocalizedName("arcanecrystal");
     }
 
 	public void register()
 	{
-		GameRegistry.registerItem(this, "upgradecrystal");
+		GameRegistry.registerItem(this, getUnlocalizedName());
 		setCreativeTab(AdvThaum.tabAdvThaum);
 		
 		 ATResearchItem ri = new ATResearchItem("ARCANECRYSTAL", "ADVTHAUM",
@@ -156,7 +156,7 @@ public class ItemArcaneCrystal extends Item
 	@Override
 	public String getItemStackDisplayName(ItemStack stack)
 	{
-	    return StatCollector.translateToLocal("item.at.arcanecrystal." + stack.getItemDamage() + ".name");
+	    return StatCollector.translateToLocal("item.arcanecrystal." + stack.getItemDamage() + ".name");
 	}
 	
 	private void registerRechargeUpgrade()

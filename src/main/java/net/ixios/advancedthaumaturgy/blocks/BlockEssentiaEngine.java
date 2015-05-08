@@ -30,6 +30,7 @@ public class BlockEssentiaEngine extends Block implements ITileEntityProvider
 	public BlockEssentiaEngine(Material material)
 	{
 		super(material);
+		setBlockName("blockEssentiaEngine");
 		setBlockTextureName("obsidian");
 		setCreativeTab(AdvThaum.tabAdvThaum);
 		renderID = RenderingRegistry.getNextAvailableRenderId();
@@ -43,7 +44,7 @@ public class BlockEssentiaEngine extends Block implements ITileEntityProvider
 	
 	public void register()
 	{
-		GameRegistry.registerBlock(this, ItemEngine.class, "blockEssentiaEngine");
+		GameRegistry.registerBlock(this, ItemEngine.class, getUnlocalizedName());
 		GameRegistry.registerTileEntity(TileEssentiaEngine.class, "tileEssentiaEngine");
 	   
 		ItemStack obsidian = new ItemStack(Blocks.obsidian);

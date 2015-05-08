@@ -18,12 +18,12 @@ public class ItemAeroSphere extends Item
 
 	public ItemAeroSphere()
     {
-	    this.setUnlocalizedName("at.aerosphere");
+	    setUnlocalizedName("aerosphere");
     }
 	
 	public void register()
 	{
-		GameRegistry.registerItem(this, "aerosphere");
+		GameRegistry.registerItem(this, getUnlocalizedName());
 		this.setCreativeTab(AdvThaum.tabAdvThaum);
 		
 		/* ATResearchItem ri = new ATResearchItem("AREOSPHERE", "ADVTHAUM",

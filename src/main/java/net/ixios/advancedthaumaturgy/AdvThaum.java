@@ -68,7 +68,7 @@ import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid=AdvThaum.MODID, version=AdvThaum.VERSION, name=AdvThaum.NAME, 
 	dependencies="required-after:Thaumcraft", acceptedMinecraftVersions=AdvThaum.MC_VERSION)
-public class AdvThaum 
+public class AdvThaum
 {
 	public final static String MODID = "advthaum";
 	public final static String VERSION = "@version@";
@@ -279,7 +279,6 @@ public class AdvThaum
 		 
 		 // enable activating node in a jar by wanding the top wood slabs
 		 WandTriggerRegistry.registerWandBlockTrigger(Thaumcraft.proxy.wandManager, 4, Blocks.wooden_slab, -1, MODID);
-		 //WandTriggerRegistry.registerWandBlockTrigger(Thaumcraft.proxy.wandManager, 5, Block.obsidian.blockID, -1);
 		 
 		 if (config.get("Feature Control", "add_permutatio_to_eggs", true).getBoolean(true))
 		 {

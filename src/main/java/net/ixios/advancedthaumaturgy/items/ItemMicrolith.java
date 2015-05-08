@@ -31,12 +31,12 @@ public class ItemMicrolith extends ItemBlock
 	@Override
 	public String getUnlocalizedName(ItemStack stack)
 	{
-		return "at.microlith." + stack.getItemDamage();
+		return "blockMicrolith." + stack.getItemDamage();
 	}
 	
 	public static String getName(int metadata)
 	{
-		return StatCollector.translateToLocal("at.microlith." + metadata + ".name");
+		return StatCollector.translateToLocal("blockMicrolith." + metadata + ".name");
 	}
 	
 	@Override

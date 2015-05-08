@@ -32,14 +32,15 @@ public class BlockThaumicFertilizer extends BlockContainer
     public BlockThaumicFertilizer(Material material)
     {
         super(material);
-        this.setCreativeTab(AdvThaum.tabAdvThaum);
-        this.setHardness(1.0f);
+        setCreativeTab(AdvThaum.tabAdvThaum);
+        setHardness(1.0f);
+        setBlockName("blockThaumicFertilizer");
         renderID = RenderingRegistry.getNextAvailableRenderId();
     }
 
     public void register()
     {
-        GameRegistry.registerBlock(this, ItemFertilizer.class, "blockThaumicFertilizer");
+        GameRegistry.registerBlock(this, ItemFertilizer.class, getUnlocalizedName());
         GameRegistry.registerTileEntity(TileThaumicFertilizer.class, "tileentityThaumicFertilizer");
   
         ItemStack jar = new ItemStack(ConfigBlocks.blockJar, 1, 0);

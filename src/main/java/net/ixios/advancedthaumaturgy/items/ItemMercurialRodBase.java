@@ -22,7 +22,7 @@ public class ItemMercurialRodBase extends Item
 	
 	public ItemMercurialRodBase()
 	{
-		setUnlocalizedName("at.mercurialrod");
+		setUnlocalizedName("mercurialrod");
 	}
 	
 	@Override
@@ -40,7 +40,7 @@ public class ItemMercurialRodBase extends Item
 	
 	public void register()
 	{
-		GameRegistry.registerItem(this, "mercurialrod");
+		GameRegistry.registerItem(this, getUnlocalizedName());
 		setCreativeTab(AdvThaum.tabAdvThaum);
 		
         ItemStack silverwoodrod = ConfigItems.WAND_ROD_SILVERWOOD.getItem();

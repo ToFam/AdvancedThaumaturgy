@@ -12,12 +12,12 @@ public class ItemEndstoneChunk extends Item
 
 	public ItemEndstoneChunk()
     {
-	    setUnlocalizedName("at.endstonechunk");
+	    setUnlocalizedName("endstonechunk");
     }
 
 	public void register()
 	{
-		GameRegistry.registerItem(this, "endstonechunk");
+		GameRegistry.registerItem(this, getUnlocalizedName());
 		setCreativeTab(AdvThaum.tabAdvThaum);
 		
 		ItemStack endstone = new ItemStack(Blocks.end_stone);
