@@ -188,8 +188,8 @@ public class AdvThaum
 	     ////////////////////////////////////////////////////////
 	
 	  
-	     LanguageRegistry.instance().addStringLocalization("itemGroup.advthaum", "en_US", "Advanced Thaumaturgy");
-	     LanguageRegistry.instance().addStringLocalization("tc.research_category.ADVTHAUM", "en_US", "Advanced Thaumaturgy");
+	    // LanguageRegistry.instance().addStringLocalization("itemGroup.advthaum", "en_US", "Advanced Thaumaturgy");
+	    // LanguageRegistry.instance().addStringLocalization("tc.research_category.ADVTHAUM", "en_US", "Advanced Thaumaturgy");
 	     
 	     MinecraftForge.EVENT_BUS.register(new ATEventHandler());
 	     FMLCommonHandler.instance().bus().register(new ArcingDamageManager());
@@ -252,9 +252,6 @@ public class AdvThaum
 				 new ResourceLocation("thaumcraft", "textures/items/thaumonomiconcheat.png"),
 				 new ResourceLocation("thaumcraft", "textures/gui/gui_researchback.png"));
 		 	 
-	     registerStuff();
-	     proxy.register();
-
 	     if (config.get("Feature Control", "enable_mercurial_core", true).getBoolean(true))
 	     {
 	    	int capacity = 500;
@@ -273,6 +270,9 @@ public class AdvThaum
 		
 		 if (MercurialWand != null)
 			 MercurialWand.register();
+		 
+	     registerStuff();
+	     proxy.register();
 		 
 		 //ThaumicInkwell.register();
 		 //ThaumicVulcanizer.register();

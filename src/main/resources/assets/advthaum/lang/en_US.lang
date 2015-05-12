@@ -1,3 +1,6 @@
+# Creative Tab
+itemGroup.advthaum=Advanced Thaumaturgy
+
 # block names
 # ===========
 
@@ -60,6 +63,7 @@ item.infusedThaumium=Infused Thaumium
 
 # Thaumcraft Research
 # ===================
+tc.research_category.ADVTHAUM=Advanced Thaumaturgy
 
 at.research.microlithflux.pg1=Drawing on the properties of both Entropy and Ordo, you've affixed a crystal that will evaporate nearby flux goo and gas.  When evaporating gas, there is a chance it will recover some of the taint in the form of Vitium.
 at.research.microlithwatcher.pg1=Imuing a crystal with Sensus has created a crystal that will keep an eye on chunks around it, chunkloading them.  It will load a 3x3 area around the chunk it is placed in.  Right click the Microlith to toggle a border outlining the loaded chunks.
@@ -99,8 +103,7 @@ at.research.voidcage.nott.pg1=You have concocted a method to imbue a crystal wit
 
 at.research.arcanecrystal.title=Arcane Crystals
 at.research.arcanecrystal.desc=No such thing as overpowered.
-at.research.arcanecrystal.pg1=Damn placeholders
-at.research.arcanecrystal.pg2=Damn placeholders
+at.research.arcanecrystal.pg1=The End contains obelisks very similar to the totem structures we find in the Overworld.  They appear to draw energy directly from the endstone present.  You've come up with a way to infuse magical properties into the endstone.  Smelting the chunk results in an inert arcane crystal, ready for various thaumaturgical applications.<LINE>"The dragon was no match for us without his healing obelisks.  Hmm, healing obelisk..."
 
 at.research.rechargeupgrade.pg1=By combining the recharging properties of the six basic wand cores and infusing them into an Arcane Crystal, you were able to fashion an upgrade for the Mercurial Wand that recharges the wand up to 15% of it's maximum capacity.<LINE>"There!  That should restore the wand's vis just enough for me to jar a node, if necessary."
 at.research.upgradecompound.pg1=Mixing some of the alien properties of ender pearls with a hodgepodge of seemingly random items into an Arcane Crystal results in a Mercurial Wand upgrade that somehow doubles the amount of vis received when tapping a node.<LINE>"This is quite nice.  This crystal allows the wand to drain one vis from a node, but receive two.  That'll cut recharge time in half.  I did find that surrounding a potato with nasty spider eyes quickly made it poisonous."

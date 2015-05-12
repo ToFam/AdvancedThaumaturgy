@@ -6,11 +6,15 @@ import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.Constants.NBT;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -72,7 +76,7 @@ public class ItemArcaneCrystal extends Item
 		 
 		 ri.setParents("MERCURIALWAND");
 		 
-		 ri.setPages(new ResearchPage("at.research.arcanecrystal.pg1"), new ResearchPage("at.research.arcanecrystal.pg2"));
+		 ri.setPages(new ResearchPage("at.research.arcanecrystal.pg1"));
 		 
 		 ri.setStub();
 		 ri.setConcealed();
@@ -166,9 +170,10 @@ public class ItemArcaneCrystal extends Item
 				new ItemStack(this, 1, 0), new ItemStack[] { ConfigItems.WAND_ROD_BLAZE.getItem(), ConfigItems.WAND_ROD_BONE.getItem(),
 															 ConfigItems.WAND_ROD_ICE.getItem(), ConfigItems.WAND_ROD_OBSIDIAN.getItem(),
 															 ConfigItems.WAND_ROD_QUARTZ.getItem(), ConfigItems.WAND_ROD_REED.getItem() });
-	
-		NBTTagInt tag[] = new NBTTagInt[1];
-		tag[0] = new NBTTagInt(Upgrades.Recharge.getFlag());
+
+		Object[] tag = new Object[2];
+		tag[0] = "upgrade";
+		tag[1] = new NBTTagInt(Upgrades.Recharge.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADERECHARGE", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 1) });
@@ -179,7 +184,7 @@ public class ItemArcaneCrystal extends Item
 					-2, 3, 5,
 					new ItemStack(this, 1, 1));
 					 
-		 ri.setTitle("item.at.arcanecrystal.1.name");
+		 ri.setTitle("item.arcanecrystal.1.name");
 		 ri.setInfo("at.research.rechargeupgrade.desc");
 		 
 		 ri.setPages(new ResearchPage("at.research.rechargeupgrade.pg1"), new ResearchPage(recipe), new ResearchPage(upgrade));
@@ -199,9 +204,10 @@ public class ItemArcaneCrystal extends Item
 		InfusionRecipe recipe = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADEDRAIN", new ItemStack(this, 1, 3), 5,
 				new AspectList().add(Aspect.SLIME, 16).add(Aspect.EXCHANGE,  16),
 				new ItemStack(this, 1, 0), new ItemStack[] { TCItems.arcanefurance, TCItems.arcanefurance, TCItems.arcanefurance, TCItems.arcanefurance });
-		
-		NBTTagInt tag[] = new NBTTagInt[1];
-		tag[0] = new NBTTagInt(Upgrades.MultiplyDrain.getFlag());
+
+		Object[] tag = new Object[2];
+		tag[0] = "upgrade";
+		tag[1] = new NBTTagInt(Upgrades.MultiplyDrain.getFlag());
 		InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADEDRAIN", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 3) });
@@ -213,7 +219,7 @@ public class ItemArcaneCrystal extends Item
 					-2, 7, 5,
 					new ItemStack(this, 1, 3));
 					 
-		 ri.setTitle("item.at.arcanecrystal.3.name");
+		 ri.setTitle("item.arcanecrystal.3.name");
 		 ri.setInfo("at.research.upgradedrain.desc");
 		 
 		 ri.setParents("ARCANECRYSTAL", "INFUSION", "DISTILESSENTIA");
@@ -246,9 +252,10 @@ public class ItemArcaneCrystal extends Item
 		InfusionRecipe recipe = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADECOMPOUND", new ItemStack(this, 1, 2), 5,
 				new AspectList().add(Aspect.ARMOR, 10).add(Aspect.DEATH,  10).add(Aspect.CROP, 10).add(Aspect.COLD, 10).add(Aspect.SLIME, 10).add(Aspect.SLIME, 10),
 				new ItemStack(this, 1, 0), new ItemStack[] { blaze, pearl, tear, pearl, cream, pearl, poisonpotato, pearl });
-		
-		NBTTagInt tag[] = new NBTTagInt[1];
-		tag[0] = new NBTTagInt(Upgrades.CompoundDrain.getFlag());
+
+		Object[] tag = new Object[2];
+		tag[0] = "upgrade";
+		tag[1] = new NBTTagInt(Upgrades.CompoundDrain.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADECOMPOUND", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 2) });
@@ -261,7 +268,7 @@ public class ItemArcaneCrystal extends Item
 					-3, 5, 5,
 					new ItemStack(this, 1, 2));
 					 
-		 ri.setTitle("item.at.arcanecrystal.2.name");
+		 ri.setTitle("item.arcanecrystal.2.name");
 		 ri.setInfo("at.research.upgradecompound.desc");
 		 
 		 ri.setParents("ARCANECRYSTAL", "INFUSION");
@@ -283,9 +290,10 @@ public class ItemArcaneCrystal extends Item
 				new ItemStack(this, 1, 0), new ItemStack [] { TCItems.cloth, TCItems.aircluster, TCItems.cloth, TCItems.watercluster,
 															  TCItems.cloth, TCItems.firecluster, TCItems.cloth, TCItems.earthcluster,
 															  TCItems.cloth, TCItems.ordocluster, TCItems.cloth, TCItems.entropycluster });
-		
-		NBTTagInt tag[] = new NBTTagInt[1];
-		tag[0] = new NBTTagInt(Upgrades.Discount.getFlag());
+
+		Object[] tag = new Object[2];
+		tag[0] = "upgrade";
+		tag[1] = new NBTTagInt(Upgrades.Discount.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADEDISCOUNT", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 4) });
@@ -297,7 +305,7 @@ public class ItemArcaneCrystal extends Item
 					2, 3, 5,
 					new ItemStack(this, 1, 4));
 					 
-		ri.setTitle("item.at.arcanecrystal.4.name");
+		ri.setTitle("item.arcanecrystal.4.name");
 		ri.setInfo("at.research.upgradediscount.desc");
 		
 		ri.setParents("ARCANECRYSTAL", "INFUSION", "ENCHFABRIC");
@@ -318,10 +326,11 @@ public class ItemArcaneCrystal extends Item
 				new AspectList().add(Aspect.ORDER, 128).add(Aspect.MAGIC,  64),
 				new ItemStack(this, 1, 0), new ItemStack [] { TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster,
 															  TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster});
-	
-		NBTTagInt tag[] = new NBTTagInt[1];
-		tag[0] = new NBTTagInt(Upgrades.Stabilizer.getFlag());
-		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADESTABILIZER", tag, 4, 
+
+		Object[] tag = new Object[2];
+		tag[0] = "upgrade";
+		tag[1] = new NBTTagInt(Upgrades.Stabilizer.getFlag());
+		InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADESTABILIZER", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 5) });
 		 
@@ -332,7 +341,7 @@ public class ItemArcaneCrystal extends Item
 					3, 5, 5,
 					new ItemStack(this, 1, 5));
 					 
-		 ri.setTitle("item.at.arcanecrystal.5.name");
+		 ri.setTitle("item.arcanecrystal.5.name");
 		 ri.setInfo("at.research.upgradestabilizer.desc");
 		 
 		 ri.setParents("ARCANECRYSTAL", "INFUSION");
@@ -352,9 +361,10 @@ public class ItemArcaneCrystal extends Item
 		InfusionRecipe recipe = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADEPOTENCY", new ItemStack(this, 1, 6), 5,
 				new AspectList().add(Aspect.ORDER, 128).add(Aspect.MAGIC,  64),
 				new ItemStack(this, 1, 0), new ItemStack [] { TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster, TCItems.ordocluster });
-	
-		NBTTagInt tag[] = new NBTTagInt[1];
-		tag[0] = new NBTTagInt(Upgrades.Potent.getFlag());
+
+		Object[] tag = new Object[2];
+		tag[0] = "upgrade";
+		tag[1] = new NBTTagInt(Upgrades.Potent.getFlag());
 		 InfusionRecipe upgrade = ThaumcraftApi.addInfusionCraftingRecipe("UPGRADEPOTENCY", tag, 4, 
 				 new AspectList().add(Aspect.MAGIC, 8), ItemMercurialWand.AnyWand, 
 				 new ItemStack[] { new ItemStack(this, 1, 6) });
@@ -366,7 +376,7 @@ public class ItemArcaneCrystal extends Item
 					2, 7, 5,
 					new ItemStack(this, 1, 6));
 					 
-		 ri.setTitle("item.at.arcanecrystal.6.name");
+		 ri.setTitle("item.arcanecrystal.6.name");
 		 ri.setInfo("at.research.upgradepotency.desc");
 		 
 		 ri.setParents("ARCANECRYSTAL", "INFUSION");
