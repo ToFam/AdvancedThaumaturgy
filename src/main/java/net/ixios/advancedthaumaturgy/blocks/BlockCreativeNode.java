@@ -7,12 +7,22 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
 import thaumcraft.common.blocks.BlockAiry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockCreativeNode extends BlockAiry
 {
+	public static final AspectList aspects = 
+			new AspectList().add(Aspect.AIR, 100).
+							 add(Aspect.EARTH, 100).
+							 add(Aspect.FIRE, 100).
+							 add(Aspect.WATER, 100).
+							 add(Aspect.ORDER, 100).
+							 add(Aspect.ENTROPY, 100);
+	
 	public static int renderID;
 	
 	public BlockCreativeNode()

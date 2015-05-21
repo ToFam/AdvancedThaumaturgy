@@ -1,5 +1,6 @@
 package net.ixios.advancedthaumaturgy.tileentities;
 
+import net.ixios.advancedthaumaturgy.blocks.BlockCreativeNode;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.nodes.NodeModifier;
@@ -8,9 +9,6 @@ import thaumcraft.common.tiles.TileNode;
 
 public class TileCreativeNode extends TileNode
 {
-
-	public static final AspectList aspects = new AspectList().add(Aspect.AIR, 100).add(Aspect.EARTH, 100).add(Aspect.FIRE, 100).add(Aspect.WATER, 100).add(Aspect.ORDER, 100).add(Aspect.ENTROPY, 100);
-	
 	public TileCreativeNode()
 	{
 		
@@ -19,7 +17,7 @@ public class TileCreativeNode extends TileNode
 	@Override
 	public AspectList getAspects()
 	{
-		return aspects;
+		return BlockCreativeNode.aspects;
 	}
 	
 	@Override

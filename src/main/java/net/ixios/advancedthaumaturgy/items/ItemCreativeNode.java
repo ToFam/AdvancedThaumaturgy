@@ -39,7 +39,8 @@ public class ItemCreativeNode extends ItemBlock
 	{
 		boolean shiftdown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
     	if (!shiftdown)
-    		return;String desc = StatCollector.translateToLocal("tile.at.creativenode.desc");
+    		return;
+    	String desc = StatCollector.translateToLocal("tile.blockCreativenode.desc");
 		String[] lines = desc.split("\\|");
 		for (String s : lines)
 			list.add(s);

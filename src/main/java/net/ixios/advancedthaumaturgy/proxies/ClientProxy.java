@@ -3,6 +3,7 @@ package net.ixios.advancedthaumaturgy.proxies;
 import java.awt.Color;
 
 import net.ixios.advancedthaumaturgy.AdvThaum;
+import net.ixios.advancedthaumaturgy.blocks.BlockCreativeNode;
 import net.ixios.advancedthaumaturgy.compat.energy.EnergyCompatBase;
 import net.ixios.advancedthaumaturgy.fx.ColorableSparkleFX;
 import net.ixios.advancedthaumaturgy.fx.CustomParticleFX;
@@ -90,8 +91,8 @@ public class ClientProxy extends CommonProxy
         
     	if (AdvThaum.MercurialWand != null)
 			MinecraftForgeClient.registerItemRenderer(AdvThaum.MercurialWand, new ItemWandRenderer());
-    
-        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvThaum.CreativeNode), new ItemNodeRenderer());
+    	
+        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvThaum.CreativeNode), new ItemNodeRenderer(BlockCreativeNode.aspects));
         
 	}
 	
