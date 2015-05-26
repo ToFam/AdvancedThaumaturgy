@@ -48,6 +48,7 @@ public class BlockEtherealJar extends BlockJar
     {
     	GameRegistry.registerBlock(this, getUnlocalizedName());
     	GameRegistry.registerTileEntity(TileEtherealJar.class, "tileEtherealJar");
+    	GameRegistry.registerItem(AdvThaum.itemEtherealJar, AdvThaum.itemEtherealJar.getUnlocalizedName());
     	AdvThaum.itemEtherealJar.setCreativeTab(AdvThaum.tabAdvThaum);
     	
     	// do research

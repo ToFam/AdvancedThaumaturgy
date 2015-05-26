@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 import thaumcraft.client.lib.UtilsFX;
 import thaumcraft.client.renderers.models.ModelJar;
 import thaumcraft.common.blocks.BlockJar;
+import thaumcraft.common.config.Config;
 import thaumcraft.common.config.ConfigBlocks;
 import thaumcraft.common.tiles.TileJarFillable;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -36,14 +37,12 @@ public class BlockEtherealJarRenderer extends TileEntitySpecialRenderer
     {
     	TileEtherealJar tile= (TileEtherealJar)te;
     	
-        //float wobble = Math.max(Math.abs(tile.wobblex), Math.abs(tile.wobblez)) / 150F;
-     
         GL11.glPushMatrix();
         GL11.glDisable(2884);
-        //GL11.glTranslatef((float)x + 0.5F, (float)y + 0.01F + wobble, (float)z + 0.5F);
+        
+        GL11.glTranslatef((float)x + 0.5F, (float)y + 0.01F, (float)z + 0.5F);
         GL11.glRotatef(180F, 1.0F, 0.0F, 0.0F);
-        //GL11.glRotatef(tile.wobblex, 0.0F, 0.0F, 1.0F);
-        //GL11.glRotatef(tile.wobblez, 1.0F, 0.0F, 0.0F);
+        
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         if (tile.amount > 0)
@@ -67,25 +66,24 @@ public class BlockEtherealJarRenderer extends TileEntitySpecialRenderer
                 break;
             }
             
+            float rot = (tile.aspectFilter.getTag().hashCode() + tile.xCoord + tile.facing) % 4 - 2;
+            
             GL11.glPushMatrix();
             GL11.glTranslatef(0.0F, -0.4F, 0.315F);
+            if (Config.crooked) GL11.glRotatef(rot, 0.0F, 0.0F, 1.0F);
             UtilsFX.renderQuadCenteredFromTexture("textures/models/label.png", 0.5F, 1.0F, 1.0F, 1.0F, -99, 771, 1.0F);
             GL11.glPopMatrix();
             GL11.glPushMatrix();
             GL11.glTranslatef(0.0F, -0.4F, 0.316F);
+            if (Config.crooked) GL11.glRotatef(rot, 0.0F, 0.0F, 1.0F);
             GL11.glScaled(0.021000000000000001D, 0.021000000000000001D, 0.021000000000000001D);
             GL11.glRotatef(180F, 0.0F, 1.0F, 0.0F);
-            UtilsFX.drawTag(-8, -8, ((TileJarFillable)tile).aspectFilter);
+            UtilsFX.drawTag(-8, -8, tile.aspectFilter);
             GL11.glPopMatrix();
             GL11.glPopMatrix();
         }
         
         FMLClientHandler.instance().getClient().renderEngine.bindTexture(getTexture());
-        
-        //GL11.glColor4f(1F, 1F, 1F, 0.5F);
-        //GL11.glEnable(GL11.GL_BLEND);
-        getModel().renderAll();
-        //GL11.glDisable(GL11.GL_BLEND);
         
         GL11.glEnable(2884);
         GL11.glPopMatrix();

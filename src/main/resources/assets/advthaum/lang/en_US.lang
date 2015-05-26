@@ -12,8 +12,8 @@ tile.blockCreativeNode.desc=Places a node that contains 100 of each|primal aspec
 tile.blockEssentiaengine.name=Essentia Engine
 tile.blockEssentiaengine.desc=Consumes various types of essentia|from nearby jars to produce energy.
 
-tile.blockEtherealjar.name=Ethereal Jar
-tile.blockEtherealjar.desc=A slightly advanced version of the|Warded Jar, capable of holding 256 essentia.
+tile.blockEtherealJar.name=Ethereal Jar
+tile.blockEtherealJar.desc=A slightly advanced version of the|Warded Jar, capable of holding 256 essentia.
 
 blockMicrolith.0.name=Microlith Base
 blockMicrolith.1.name=Flux Dissipator

@@ -186,10 +186,6 @@ public class AdvThaum
 	     }
 
 	     ////////////////////////////////////////////////////////
-	
-	  
-	    // LanguageRegistry.instance().addStringLocalization("itemGroup.advthaum", "en_US", "Advanced Thaumaturgy");
-	    // LanguageRegistry.instance().addStringLocalization("tc.research_category.ADVTHAUM", "en_US", "Advanced Thaumaturgy");
 	     
 	     MinecraftForge.EVENT_BUS.register(new ATEventHandler());
 	     FMLCommonHandler.instance().bus().register(new ArcingDamageManager());
