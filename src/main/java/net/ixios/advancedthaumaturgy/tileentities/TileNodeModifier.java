@@ -77,6 +77,16 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 				m_essences.remove(aspect);
 		}
 		
+		public void removeEssentia(Aspect aspect)
+		{
+			m_essentia.remove(aspect);
+		}
+		
+		public void removeEssence(Aspect aspect)
+		{
+			m_essences.remove(aspect);
+		}
+		
 		public int getCurrentAspectAmount()
 		{
 			if (m_essentia.size() == 0)
@@ -478,7 +488,7 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 				return false;
 			}
 			int req = requirements.getEssenceAmount(null);
-			requirements.modifyEssence(null, -5000); // essentially remove the aspect, heh
+			requirements.removeEssence(null);
 			requirements.modifyEssence(pedaspects.getAspects()[0], req);
 			aspecttoincrease = pedaspects.getAspects()[0];
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
@@ -671,7 +681,11 @@ public class TileNodeModifier extends TileEntity implements IAspectContainer
 			
 			case IncreaseAspect:
 			{
-				jar.setNodeVisBase(aspecttoincrease, (short)(jar.getNodeVisBase(aspecttoincrease) + 1));
+				for (Aspect a : jar.getAspects().getAspects()) 
+				{
+					jar.setNodeVisBase(a, (short)(jar.getNodeVisBase(a) + 1));
+					jar.addToContainer(a, 1);
+				}
 			}
 			break;
 			
