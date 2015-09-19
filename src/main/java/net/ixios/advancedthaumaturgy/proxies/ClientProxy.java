@@ -4,7 +4,6 @@ import java.awt.Color;
 
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.blocks.BlockCreativeNode;
-import net.ixios.advancedthaumaturgy.compat.energy.EnergyCompatBase;
 import net.ixios.advancedthaumaturgy.fx.ColorableSparkleFX;
 import net.ixios.advancedthaumaturgy.fx.CustomParticleFX;
 import net.ixios.advancedthaumaturgy.fx.EntityOrbiterFX;
@@ -74,12 +73,9 @@ public class ClientProxy extends CommonProxy
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvThaum.Microlith), renderer);
         ClientRegistry.bindTileEntitySpecialRenderer(TileMicrolithBase.class, renderer);
         
-		if (EnergyCompatBase.isPresent())
-		{
-			renderer = new GenericRenderer(new ModelEngine());
-			MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvThaum.EssentiaEngine), renderer);
-			ClientRegistry.bindTileEntitySpecialRenderer(TileEssentiaEngine.class, renderer);	
-		}
+		renderer = new GenericRenderer(new ModelEngine());
+		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(AdvThaum.EssentiaEngine), renderer);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEssentiaEngine.class, renderer);
 		
         TileEntitySpecialRenderer special = new BlockEtherealJarRenderer();
 

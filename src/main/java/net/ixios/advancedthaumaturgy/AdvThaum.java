@@ -9,8 +9,6 @@ import net.ixios.advancedthaumaturgy.blocks.BlockNodeModifier;
 import net.ixios.advancedthaumaturgy.blocks.BlockPlaceholder;
 import net.ixios.advancedthaumaturgy.blocks.BlockThaumicFertilizer;
 import net.ixios.advancedthaumaturgy.blocks.BlockThaumicVulcanizer;
-import net.ixios.advancedthaumaturgy.compat.energy.RFCompatChecker;
-import net.ixios.advancedthaumaturgy.compat.energy.EnergyCompatBase;
 import net.ixios.advancedthaumaturgy.items.ItemAeroSphere;
 import net.ixios.advancedthaumaturgy.items.ItemArcaneCrystal;
 import net.ixios.advancedthaumaturgy.items.ItemEndstoneChunk;
@@ -45,13 +43,10 @@ import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.research.ResearchCategories;
-import thaumcraft.api.research.ResearchItem;
-import thaumcraft.api.research.ResearchPage;
 import thaumcraft.api.wands.WandRod;
 import thaumcraft.api.wands.WandTriggerRegistry;
 import thaumcraft.common.Thaumcraft;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -63,7 +58,6 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid=AdvThaum.MODID, version=AdvThaum.VERSION, name=AdvThaum.NAME, 
@@ -131,13 +125,6 @@ public class AdvThaum
 	     config = new Configuration(event.getSuggestedConfigurationFile());
 	     config.load();
 	     
-	     // Check if RF api is enabled
-	     if (Loader.isModLoaded("CoFHLib"))
-	    	 new RFCompatChecker().register();
-	
-		 if (config.get("Feature Control", "force_enable_essentia_engine", false).getBoolean(false))
-			 EnergyCompatBase.forceEnable();
-	     
 	     ////////////////////////////////////////////////////////
 	 	     
 	     // Blocks
@@ -156,8 +143,8 @@ public class AdvThaum
 	     if (config.get("Feature Control", "enable_miniligh", true).getBoolean(true))
 	    	 Microlith = new BlockMicrolith(Material.ground);
 
-	     if (AdvThaum.config.get("Feature Control", "enable_engine", true).getBoolean(true) && EnergyCompatBase.isPresent())
-	    	 AdvThaum.EssentiaEngine = new BlockEssentiaEngine(Material.rock);
+	     if (config.get("Feature Control", "enable_engine", true).getBoolean(true))
+	    	 EssentiaEngine = new BlockEssentiaEngine(Material.rock);
 
 	     if (config.get("Feature Control", "enable_creative_node", true).getBoolean(true))
 	    	 CreativeNode = new BlockCreativeNode();
@@ -196,7 +183,7 @@ public class AdvThaum
 	
 	 private void registerStuff()
 	 {
-		if (EnergyCompatBase.isPresent())
+		if (EssentiaEngine != null)
 			AdvThaum.EssentiaEngine.register();
 			
 		 if (InfusedThaumium != null)
@@ -297,17 +284,6 @@ public class AdvThaum
 		 }
 			 
 		 config.save();
-		 
-		 LanguageRegistry.instance().addStringLocalization("tc.research_name.TESTBUILD", "en_US",  "Test Build Notes");
-		 ResearchItem ri = new ResearchItem("TESTBUILD", "ADVTHAUM", new AspectList(), 0, -2, 0, new ItemStack(CreativeNode));
-		 
-		 ri.setAutoUnlock();
-		 ri.setRound();
-		 
-		 ri.setPages(new ResearchPage("This build is for testing only.  You should NOT be using this on a live server / map.  Doing so will likely kill your world save.\nAny Research with an unset localized name (eg at.research.something.name) is likely something I haven't quite finished but it will be in the public release build.\n\n- Lycaon"));
-		 
-		 ri.registerResearchItem();
-		 
      }
 	 
 	 @EventHandler

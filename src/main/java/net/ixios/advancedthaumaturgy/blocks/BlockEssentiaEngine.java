@@ -95,7 +95,7 @@ public class BlockEssentiaEngine extends Block implements ITileEntityProvider
 			hassignal = true;
 		
 		TileEssentiaEngine te = (TileEssentiaEngine)world.getTileEntity(x,  y,  z);
-		te.setActive(hassignal);
+		te.setActive(!hassignal);
 	}
 	
 	@Override
