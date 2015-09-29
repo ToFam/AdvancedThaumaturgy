@@ -1,9 +1,10 @@
 package net.ixios.advancedthaumaturgy.tileentities;
 
-import java.util.HashMap;
+import java.util.Collection;
 
 import net.ixios.advancedthaumaturgy.AdvThaum;
-import net.ixios.advancedthaumaturgy.misc.Utilities;
+import net.ixios.advancedthaumaturgy.misc.EssentiaGenerator;
+import net.ixios.advancedthaumaturgy.misc.JarFinder;
 import net.ixios.advancedthaumaturgy.misc.Vector3F;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,50 +13,40 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.aspects.IAspectContainer;
 import thaumcraft.api.aspects.IEssentiaTransport;
 import thaumcraft.client.fx.bolt.FXLightningBolt;
-import thaumcraft.common.tiles.TileJarFillable;
-import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-//import cpw.mods.fml.common.Optional.Method;
 
-public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, IEssentiaTransport
+public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, IEssentiaTransport, IAspectContainer
 {
-	private final static int BASE_RF = 6000;
-	private static HashMap<Aspect, Float> aspectModifiers;
-	static {
-		aspectModifiers = new HashMap<Aspect, Float>();
-		aspectModifiers.put(Aspect.FIRE, 1.0F);
-		aspectModifiers.put(Aspect.EARTH, 0.5F);
-		aspectModifiers.put(Aspect.AIR, 0.5F);
-		aspectModifiers.put(Aspect.WATER, 0.5F);
-		aspectModifiers.put(Aspect.ORDER, 1.0F);
-		aspectModifiers.put(Aspect.ENTROPY, 0.5F);
-		
-		aspectModifiers.put(Aspect.TREE, 0.25F);
-		aspectModifiers.put(Aspect.PLANT, 0.25F);
-		aspectModifiers.put(Aspect.ENERGY, 2.0F);
-		aspectModifiers.put(Aspect.LIGHT, 1.0F);
-	}
-	
-	private EnergyStorage energy;
+	private static boolean needTubes;
 
-	private Aspect curraspect;
-	private boolean currentlyactive;
-	private int counter;
+	private JarFinder finder;
+	private EssentiaGenerator generator;
+	private Aspect aspect;
+	private int essentia;
+	private boolean active;
+	
+	public static void init()
+	{
+		needTubes = AdvThaum.config.get("EssentiaEngine", "needsEssentiaTubes", false, 
+				"Set to false if the Engine should pull essentia from nearby jars like the Infusion Altar").getBoolean();
+	}
 	
 	public TileEssentiaEngine()
 	{
-		energy = new EnergyStorage(32000, 80);
-		currentlyactive = false;
+		generator = new EssentiaGenerator();
+		active = false;
+		finder = new JarFinder(xCoord, yCoord, zCoord, worldObj, needTubes, this);
 	}
 
 	public void setActive(boolean value)
 	{
-		currentlyactive = value;
+		active = value;
 		if (!worldObj.isRemote)
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
@@ -66,124 +57,39 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 		return true;
 	}
 	
-	private int generate(int max, boolean simulated) {
-		float perAmount = BASE_RF * aspectModifiers.get(curraspect);
-		int d = energy.getMaxEnergyStored() - energy.getEnergyStored();
-		int store = (int) (d / perAmount);
-		if (!simulated)
-			energy.modifyEnergyStored((int)(store * perAmount));
-		return store;
-	}
-	
-	private void switchAspect() {
-		// TODO
-	}
-	
-	private void fill() {
-		if (generate(1, true) != 1)
-			return;
-		
-		TileEntity te = null;
-		IEssentiaTransport ic = null;
-		for (ForgeDirection orientation : ForgeDirection.VALID_DIRECTIONS) {
-			if (isConnectable(orientation)) {
-				te = ThaumcraftApiHelper.getConnectableTile(this.worldObj, xCoord, yCoord, zCoord, orientation);
-				if (te != null) {
-					ic = (IEssentiaTransport) te;
-					if ((ic.getEssentiaAmount(orientation.getOpposite()) > 0) 
-					 && (ic.getSuctionAmount(orientation.getOpposite()) < getSuctionAmount(null)) 
-					 && (getSuctionAmount(null) >= ic.getMinimumSuction())) {
-						int ess = ic.takeEssentia(curraspect, 1, orientation.getOpposite());
-						if (ess > 0) {
-							generate(ess, false);
-							return;
-						}
-	            	}
-				}
-			}
-		}
-
-		counter++;
-		if (counter > 20) {
-			switchAspect();
-			counter = 0;
-		}
-	}
-	
-	private void restockEnergy() {
-		if (energy.getEnergyStored() >= energy.getMaxEnergyStored())
-			return;
-	
-		if (hasEssentiaTubeConnection()) {
-			fill();
-		} else {
-			TileJarFillable essentiaJar = Utilities.findEssentiaJar(worldObj, curraspect, this, 20, 2, 20);
-			if (essentiaJar == null || essentiaJar.amount == 0) {
-				switchAspect();
-				return;
-			}
-			
-			if (generate(1, true) == 1) {
-				// createParticls is a blank method in common proxy, and has actual code in client proxy
-	            AdvThaum.proxy.createParticle(worldObj, (float)essentiaJar.xCoord + 0.5F, essentiaJar.yCoord + 1, (float)essentiaJar.zCoord + 0.5F, 
-	            		(float)xCoord + 0.5F, (float)yCoord + 0.8F, (float)zCoord + 0.5F, essentiaJar.aspect.getColor());
-	            essentiaJar.takeFromContainer(curraspect, 1);
-				generate(1, false);
-	            if (!worldObj.isRemote)
-	            {
-	            	worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	            	worldObj.markBlockForUpdate(essentiaJar.xCoord, essentiaJar.yCoord, essentiaJar.zCoord);
-	            }
-			}
-		}
-	}
-	
 	@Override
 	public void updateEntity()
 	{
 		super.updateEntity();
 		
-		if ((worldObj.isRemote) && (curraspect != null))
+		Collection<Aspect> needed = generator.needs();
+		if (needed.size() != 0)
 		{
-			Vector3F src = new Vector3F(xCoord + 0.5F, yCoord + 1.0F, zCoord + 0.5F);
-			Vector3F dst = new Vector3F(src.x, yCoord, src.z);
-			
-			/*src.x += (worldObj.rand.nextFloat() - 0.5F);
-			src.y += (worldObj.rand.nextFloat() - 0.5F);
-			src.z += (worldObj.rand.nextFloat() - 0.5F);*/
-			
-			dst.x += (worldObj.rand.nextFloat() - 0.5F);
-			dst.y += (worldObj.rand.nextFloat() - 0.5F);
-			dst.z += (worldObj.rand.nextFloat() - 0.5F);
-			
-			if (Minecraft.getMinecraft().renderViewEntity.ticksExisted % 60 == 0)
+			Aspect drained = finder.drainEssentia(needed);
+			if (drained != null)
 			{
-				FXLightningBolt bolt = new FXLightningBolt(worldObj, src.x, src.y, src.z, dst.x, dst.y, dst.z, worldObj.rand.nextLong(), 5, 1);
-				bolt.defaultFractal();
-				bolt.setType(0);
-				bolt.finalizeBolt();
-			}
-			
-			if (curraspect != null)
-			{
-				AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, curraspect.getColor());
-				AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, curraspect.getColor());
-				AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, curraspect.getColor());
-				AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, curraspect.getColor());
+				generator.addToContainer(drained, 1);
 			}
 		}
 		
-		restockEnergy();
+		generator.generate();
 		
-		if (!currentlyactive || energy.getEnergyStored() <= 0)
-			return;
+		if (active && generator.getEnergyStored(ForgeDirection.UP) > 0)
+			outputEnergy();
 		
+		if ((worldObj.isRemote) && (aspect != null))
+			render();
+	}
+	
+	private void outputEnergy()
+	{
 		TileEntity tile = worldObj.getTileEntity(xCoord, yCoord + 1, zCoord);
-		if (tile != null && tile instanceof IEnergyReceiver) {
+		if (tile != null && tile instanceof IEnergyReceiver) 
+		{
 			IEnergyReceiver receiver = (IEnergyReceiver) tile;
 			
-			int maxReceived = receiver.receiveEnergy(ForgeDirection.DOWN, energy.getMaxExtract(), true);
-			receiver.receiveEnergy(ForgeDirection.DOWN, energy.extractEnergy(maxReceived, false), false);
+			int maxReceived = receiver.receiveEnergy(ForgeDirection.DOWN, generator.getMaxExtract(), true);
+			receiver.receiveEnergy(ForgeDirection.DOWN, generator.extractEnergy(ForgeDirection.UP, maxReceived, false), false);
 			
 			if (worldObj.getWorldTime() % 4 == 0)
 				AdvThaum.proxy.createEngineParticle(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UP, 0xFF00FFFF);
@@ -193,34 +99,52 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 		}
 	}
 	
-	private boolean hasEssentiaTubeConnection()
+	private void render()
 	{
-		for (ForgeDirection orientation : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity tile = worldObj.getTileEntity(xCoord + orientation.offsetX, yCoord + orientation.offsetY, zCoord + orientation.offsetZ);
-			if (tile instanceof IEssentiaTransport)
-				return true;
+		if (!worldObj.isRemote)
+			return;
+		Vector3F src = new Vector3F(xCoord + 0.5F, yCoord + 1.0F, zCoord + 0.5F);
+		Vector3F dst = new Vector3F(src.x, yCoord, src.z);
+		
+		/*src.x += (worldObj.rand.nextFloat() - 0.5F);
+		src.y += (worldObj.rand.nextFloat() - 0.5F);
+		src.z += (worldObj.rand.nextFloat() - 0.5F);*/
+		
+		dst.x += (worldObj.rand.nextFloat() - 0.5F);
+		dst.y += (worldObj.rand.nextFloat() - 0.5F);
+		dst.z += (worldObj.rand.nextFloat() - 0.5F);
+		
+		if (Minecraft.getMinecraft().renderViewEntity.ticksExisted % 60 == 0)
+		{
+			FXLightningBolt bolt = new FXLightningBolt(worldObj, src.x, src.y, src.z, dst.x, dst.y, dst.z, worldObj.rand.nextLong(), 5, 1);
+			bolt.defaultFractal();
+			bolt.setType(0);
+			bolt.finalizeBolt();
 		}
-		return false;
+		
+		if (aspect != null)
+		{
+			AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, aspect.getColor());
+			AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, aspect.getColor());
+			AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, aspect.getColor());
+			AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, aspect.getColor());
+		}
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
 	{
 		super.readFromNBT(nbt);
-		energy.readFromNBT(nbt);
-		if (nbt.hasKey("aspect"))
-			curraspect = Aspect.getAspect(nbt.getString("aspect").toLowerCase());
-		currentlyactive = nbt.getBoolean("active");
+		generator.readFromNBT(nbt);
+		active = nbt.getBoolean("active");
 	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound nbt)
 	{
 		super.writeToNBT(nbt);
-		energy.writeToNBT(nbt);
-		if (curraspect != null)
-			nbt.setString("aspect", curraspect.getName().toLowerCase());
-		nbt.setBoolean("active", currentlyactive);
+		generator.writeToNBT(nbt);
+		nbt.setBoolean("active", active);
 	}
 	
 	@Override
@@ -236,33 +160,46 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 	{
 		readFromNBT(pkt.func_148857_g());
 	}
+	
+	/*
+	 * IEnergyProvider
+	 */
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(ForgeDirection from) 
+	{
 		return true;
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
-		if (currentlyactive)
-			return energy.extractEnergy(maxExtract, simulate);
+	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) 
+	{
+		if (active)
+			return generator.extractEnergy(from, maxExtract, simulate);
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
-		return energy.getEnergyStored();
+	public int getEnergyStored(ForgeDirection from) 
+	{
+		return generator.getEnergyStored(from);
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
-		return energy.getMaxEnergyStored();
+	public int getMaxEnergyStored(ForgeDirection from) 
+	{
+		return generator.getMaxEnergyStored(from);
 	}
+	
+	/*
+	 * IEssentiaTransport
+	 */
 
 	@Override
-	public boolean isConnectable(ForgeDirection face) {
-		switch (face) {
+	public boolean isConnectable(ForgeDirection face) 
+	{
+		switch (face) 
+		{
 		case NORTH:
 		case EAST:
 		case SOUTH:
@@ -274,58 +211,114 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 	}
 
 	@Override
-	public boolean canInputFrom(ForgeDirection face) {
+	public boolean canInputFrom(ForgeDirection face) 
+	{
 		return isConnectable(face);
 	}
 
 	@Override
-	public Aspect getSuctionType(ForgeDirection face) {
-		return curraspect;
+	public Aspect getSuctionType(ForgeDirection face) 
+	{
+		return aspect;
 	}
 
 	@Override
-	public int getSuctionAmount(ForgeDirection face) {
-		return (curraspect != null) ? 128 : 0;
+	public int getSuctionAmount(ForgeDirection face) 
+	{
+		return (aspect != null) ? 128 : 0;
 	}
 
 	@Override
-	public int addEssentia(Aspect aspect, int amount, ForgeDirection face) {
-		return canInputFrom(face) ? generate(amount, false) : 0;
+	public int addEssentia(Aspect aspect, int amount, ForgeDirection face) 
+	{
+		return canInputFrom(face) ? generator.addToContainer(aspect, amount) : 0;
 	}
 
 	@Override
-	public int takeEssentia(Aspect aspect, int amount, ForgeDirection face) {
+	public int takeEssentia(Aspect aspect, int amount, ForgeDirection face) 
+	{
 		return 0;
 	}
-
-	@Override
-	public boolean canOutputTo(ForgeDirection face) {
-		return false;
-	}
-
-	@Override
-	public void setSuction(Aspect aspect, int amount) {
-	}
-
-	@Override
-	public Aspect getEssentiaType(ForgeDirection face) {
-		return null;
-	}
-
-	@Override
-	public int getEssentiaAmount(ForgeDirection face) {
-		return 0;
-	}
-
-	@Override
-	public int getMinimumSuction() {
-		return 0;
-	}
-
-	@Override
-	public boolean renderExtendedTube() {
-		return false;
-	}
-
 	
+	@Override
+	public int getEssentiaAmount(ForgeDirection face) 
+	{
+		return essentia;
+	}
+	
+	@Override
+	public Aspect getEssentiaType(ForgeDirection face) 
+	{
+		return generator.getAspects().getAspects()[0];
+	}
+
+	@Override
+	public boolean canOutputTo(ForgeDirection face) {return false;}
+
+	@Override
+	public void setSuction(Aspect aspect, int amount) {}
+
+	@Override
+	public int getMinimumSuction() {return 0;}
+
+	@Override
+	public boolean renderExtendedTube() {return false;}
+
+	/*
+	 * IAspectContainer
+	 */
+
+	@Override
+	public AspectList getAspects() 
+	{
+		AspectList rtn = new AspectList();
+		if (aspect != null && essentia > 0)
+			rtn.add(aspect, essentia);
+		return rtn;
+	}
+
+	@Override
+	public boolean doesContainerAccept(Aspect tag) 
+	{
+		return aspect == tag;
+	}
+
+	@Override
+	public int addToContainer(Aspect tag, int amount) 
+	{
+		int rtn = generator.addToContainer(tag, amount);
+		if (rtn > 0 && !worldObj.isRemote)
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		return rtn;
+	}
+
+	@Override
+	public boolean doesContainerContainAmount(Aspect tag, int amount) 
+	{
+		return aspect == tag && essentia >= amount;
+	}
+
+	@Override
+	public boolean doesContainerContain(AspectList ot) {
+		if (essentia > 0)
+			for (Aspect a : ot.getAspects())
+				if (aspect == a)
+					return true;
+		return false;
+	}
+
+	@Override
+	public int containerContains(Aspect tag) 
+	{
+		return tag == aspect ? essentia : 0;
+	}
+
+	@Override
+	public void setAspects(AspectList aspects) {}
+
+	@Override
+	public boolean takeFromContainer(Aspect tag, int amount) {return false;}
+
+	@Override
+	public boolean takeFromContainer(AspectList ot) {return false;}
 }
