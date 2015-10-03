@@ -245,7 +245,7 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 	@Override
 	public int getSuctionAmount(ForgeDirection face) 
 	{
-		return (aspect != null) ? 128 : 0;
+		return 128;
 	}
 
 	@Override
@@ -269,7 +269,8 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 	@Override
 	public Aspect getEssentiaType(ForgeDirection face) 
 	{
-		return generator.getAspects().getAspects()[0];
+		Aspect[] aspects = generator.getAspects().getAspects();
+		return aspects.length > 0 ? aspects[0] : null;
 	}
 
 	@Override
@@ -279,7 +280,7 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 	public void setSuction(Aspect aspect, int amount) {}
 
 	@Override
-	public int getMinimumSuction() {return 0;}
+	public int getMinimumSuction() {return 128;}
 
 	@Override
 	public boolean renderExtendedTube() {return false;}

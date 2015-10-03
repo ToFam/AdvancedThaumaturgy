@@ -67,19 +67,14 @@ public class JarFinder {
 			{
 				connectedTube = new Tube();
 				connectedTube.tube = (IEssentiaTransport) ThaumcraftApiHelper.getConnectableTile(world, xCoord, yCoord, zCoord, orientation);
-				connectedTube.orientation = orientation;
-				if ((connectedTube != null) 
-				 && (connectedTube.tube.getEssentiaAmount(orientation.getOpposite()) > 0))
+				if ((connectedTube.tube != null) 
+				 && (connectedTube.tube.getEssentiaAmount(orientation.getOpposite()) > 0)
+				 && (connectedTube.tube.getSuctionAmount(orientation.getOpposite()) < tile.getSuctionAmount(orientation))
+				 && (connectedTube.tube.getMinimumSuction() <= tile.getSuctionAmount(orientation)))
 				{
 					Aspect aspect = connectedTube.tube.getEssentiaType(orientation.getOpposite());
-					if (found.get(aspect) != null)
-					{
-						// check suction
-					}
-					else
-					{
-						found.put(aspect, connectedTube);
-					}
+					connectedTube.orientation = orientation;
+					found.put(aspect, connectedTube);
 				}
 			}
 		}
