@@ -3,6 +3,7 @@ package net.ixios.advancedthaumaturgy.blocks;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.items.ItemEngine;
 import net.ixios.advancedthaumaturgy.misc.ATResearchItem;
+import net.ixios.advancedthaumaturgy.misc.EssentiaGenerator;
 import net.ixios.advancedthaumaturgy.tileentities.TileEssentiaEngine;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -46,6 +47,9 @@ public class BlockEssentiaEngine extends Block implements ITileEntityProvider
 	{
 		GameRegistry.registerBlock(this, ItemEngine.class, getUnlocalizedName());
 		GameRegistry.registerTileEntity(TileEssentiaEngine.class, "tileEssentiaEngine");
+		
+		EssentiaGenerator.initModifiers();
+		TileEssentiaEngine.init();
 	   
 		ItemStack obsidian = new ItemStack(Blocks.obsidian);
 		ItemStack cluster = new ItemStack(ConfigBlocks.blockCrystal, 1, 6);

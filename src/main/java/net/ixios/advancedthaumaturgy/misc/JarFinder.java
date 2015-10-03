@@ -35,7 +35,7 @@ public class JarFinder {
 	{
 		this(x, y, z, world);
 		this.tile = tile;
-		this.useTubes = true;
+		this.useTubes = useTubes;
 	}
 	
 	public Aspect drainEssentia(Collection<Aspect> aspectsByPriority)
@@ -110,12 +110,10 @@ public class JarFinder {
 				if (world.isRemote)
 				{
 		            AdvThaum.proxy.createParticle(world, (float)jar.xCoord + 0.5F, jar.yCoord + 1, (float)jar.zCoord + 0.5F, 
-		            		(float)xCoord + 0.5F, (float)yCoord + 0.8F, (float)zCoord + 0.5F, jar.aspect.getColor());
+		            		(float)xCoord + 0.5F, (float)yCoord + 0.8F, (float)zCoord + 0.5F, a.getColor());
 				}
-				else
-				{
-					world.markBlockForUpdate(jar.xCoord, jar.yCoord, jar.zCoord);
-				}
+
+				world.markBlockForUpdate(jar.xCoord, jar.yCoord, jar.zCoord);
 				return a;
 			}
 		}

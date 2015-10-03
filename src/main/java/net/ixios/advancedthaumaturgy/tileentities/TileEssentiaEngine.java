@@ -2,6 +2,8 @@ package net.ixios.advancedthaumaturgy.tileentities;
 
 import java.util.Collection;
 
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.misc.EssentiaGenerator;
 import net.ixios.advancedthaumaturgy.misc.JarFinder;
@@ -18,8 +20,6 @@ import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IAspectContainer;
 import thaumcraft.api.aspects.IEssentiaTransport;
 import thaumcraft.client.fx.bolt.FXLightningBolt;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 
 public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, IEssentiaTransport, IAspectContainer
 {
@@ -33,15 +33,15 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 	
 	public static void init()
 	{
-		needTubes = AdvThaum.config.get("EssentiaEngine", "needsEssentiaTubes", false, 
+		AdvThaum.config.addCustomCategoryComment("essentiaengine", "RF calculation: baseRF * AspectRatio (pun intended)");
+		needTubes = AdvThaum.config.get("EssentiaEngine", "needsEssentiaTubes", true, 
 				"Set to false if the Engine should pull essentia from nearby jars like the Infusion Altar").getBoolean();
 	}
 	
 	public TileEssentiaEngine()
 	{
 		generator = new EssentiaGenerator();
-		active = false;
-		finder = new JarFinder(xCoord, yCoord, zCoord, worldObj, needTubes, this);
+		active = true;
 	}
 
 	public void setActive(boolean value)
@@ -65,6 +65,9 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 		Collection<Aspect> needed = generator.needs();
 		if (needed.size() != 0)
 		{
+			if (finder == null)
+				finder = new JarFinder(xCoord, yCoord, zCoord, worldObj, needTubes, this);
+			
 			Aspect drained = finder.drainEssentia(needed);
 			if (drained != null)
 			{
@@ -73,6 +76,7 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 		}
 		
 		generator.generate();
+		syncAspect();
 		
 		if (active && generator.getEnergyStored(ForgeDirection.UP) > 0)
 			outputEnergy();
@@ -130,6 +134,21 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 			AdvThaum.proxy.createOrbitingParticle(worldObj, this, 20, 0.2F, aspect.getColor());
 		}
 	}
+	
+	private void syncAspect()
+	{
+		AspectList l = generator.getAspects();
+		if (l.size() == 0)
+		{
+			aspect = null;
+			essentia = 0;
+		}
+		else
+		{
+			aspect = l.getAspects()[0];
+			essentia = l.getAmount(aspect);
+		}
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
@@ -137,6 +156,7 @@ public class TileEssentiaEngine extends TileEntity implements IEnergyProvider, I
 		super.readFromNBT(nbt);
 		generator.readFromNBT(nbt);
 		active = nbt.getBoolean("active");
+		syncAspect();
 	}
 	
 	@Override
