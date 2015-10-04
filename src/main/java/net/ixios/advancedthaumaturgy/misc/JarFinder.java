@@ -2,9 +2,12 @@ package net.ixios.advancedthaumaturgy.misc;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.ixios.advancedthaumaturgy.AdvThaum;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import thaumcraft.api.ThaumcraftApiHelper;
@@ -21,6 +24,7 @@ public class JarFinder {
 	private IEssentiaTransport tile;
 	
 	private HashMap<Aspect, List<TileJarFillable>> jarSources;
+	private TileJarFillable cache;
 	
 	public JarFinder(int x, int y, int z, World world)
 	{
@@ -47,11 +51,17 @@ public class JarFinder {
 		}
 		else
 		{
-			rtn = drainFromSources(aspectsByPriority);
-			if (rtn == null)
+			if (cache != null && cache.aspect != null && cache.amount > 0)
 			{
-				// updateSources
+				drainJar(cache, cache.aspect);
+				return cache.aspect;
 			}
+			else
+			{
+				cache = null;
+			}
+			
+			rtn = drainFromSources(aspectsByPriority);
 		}
 		
 		return rtn;
@@ -96,23 +106,73 @@ public class JarFinder {
 	
 	private Aspect drainFromSources(Collection<Aspect> aspectsByPriority)
 	{
+		boolean searched = false;
+		if (jarSources == null)
+		{
+			findSources();
+			searched = true;
+		}
+		
 		for (Aspect a : aspectsByPriority)
 		{
-			TileJarFillable jar = Utilities.findEssentiaJar(world, a, xCoord, yCoord, zCoord, 10, 2, 10);
-			if (jar != null && jar.amount > 0)
+			List<TileJarFillable> jarList = jarSources.get(a);
+			for (Iterator<TileJarFillable> it = jarList.iterator(); it.hasNext();)
 			{
-				jar.takeFromContainer(a, 1);
-				if (world.isRemote)
+				TileJarFillable jar = it.next();
+				if (jar == null || jar.aspect != a || jar.amount <= 0)
 				{
-		            AdvThaum.proxy.createParticle(world, (float)jar.xCoord + 0.5F, jar.yCoord + 1, (float)jar.zCoord + 0.5F, 
-		            		(float)xCoord + 0.5F, (float)yCoord + 0.8F, (float)zCoord + 0.5F, a.getColor());
+					it.remove();
+					continue;
 				}
-
-				world.markBlockForUpdate(jar.xCoord, jar.yCoord, jar.zCoord);
+				
+				drainJar(jar, a);
 				return a;
 			}
+			
+			if (!searched)
+				findSources();
 		}
 		return null;
+	}
+	
+	private void findSources()
+	{
+		if (jarSources == null)
+			jarSources = new HashMap<Aspect, List<TileJarFillable>>();
+		else
+			jarSources.clear();
+		
+		for (int dy = -1; dy <= 1; dy++)
+		for (int dx = -20; dx <= 20; dx++)
+		for (int dz = -20; dz <= 20; dz++)
+		{
+			TileEntity te = world.getTileEntity(xCoord + dx, yCoord + dy, zCoord + dz);
+			if (te instanceof TileJarFillable)
+			{
+				TileJarFillable jar = (TileJarFillable) te;
+				if (jar != null && jar.amount > 0 && jar.aspect != null)
+				{
+					List<TileJarFillable> jarList = jarSources.get(jar.aspect);
+					if (jarList == null)
+						jarList = new LinkedList<TileJarFillable>();
+					jarList.add(jar);
+				}
+			}
+		}
+	}
+	
+	private void drainJar(TileJarFillable jar, Aspect a)
+	{
+		jar.takeFromContainer(a, 1);
+		if (jar.amount > 0)
+			cache = jar;
+		if (world.isRemote)
+		{
+            AdvThaum.proxy.createParticle(world, (float)jar.xCoord + 0.5F, jar.yCoord + 1, (float)jar.zCoord + 0.5F, 
+            		(float)xCoord + 0.5F, (float)yCoord + 0.8F, (float)zCoord + 0.5F, a.getColor());
+		}
+
+		world.markBlockForUpdate(jar.xCoord, jar.yCoord, jar.zCoord);
 	}
 	
 	private class Tube
