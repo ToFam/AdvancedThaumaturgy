@@ -9,6 +9,7 @@ import net.ixios.advancedthaumaturgy.blocks.BlockNodeModifier;
 import net.ixios.advancedthaumaturgy.blocks.BlockPlaceholder;
 import net.ixios.advancedthaumaturgy.blocks.BlockThaumicFertilizer;
 import net.ixios.advancedthaumaturgy.blocks.BlockThaumicVulcanizer;
+import net.ixios.advancedthaumaturgy.integration.waila.WailaEssentiaEngineHandler;
 import net.ixios.advancedthaumaturgy.items.ItemAeroSphere;
 import net.ixios.advancedthaumaturgy.items.ItemArcaneCrystal;
 import net.ixios.advancedthaumaturgy.items.ItemEndstoneChunk;
@@ -25,6 +26,7 @@ import net.ixios.advancedthaumaturgy.misc.ArcingDamageManager;
 import net.ixios.advancedthaumaturgy.misc.ChunkLoadingClass;
 import net.ixios.advancedthaumaturgy.network.PacketStartNodeModification;
 import net.ixios.advancedthaumaturgy.proxies.CommonProxy;
+import net.ixios.advancedthaumaturgy.tileentities.TileEssentiaEngine;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -52,6 +54,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -59,6 +62,7 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
+import mcp.mobius.waila.api.IWailaRegistrar;
 
 @Mod(modid=AdvThaum.MODID, version=AdvThaum.VERSION, name=AdvThaum.NAME, 
 	dependencies="required-after:Forge;required-after:Thaumcraft", acceptedMinecraftVersions=AdvThaum.MC_VERSION)
@@ -111,6 +115,11 @@ public class AdvThaum
 	public static void log(String text)
 	{
 	    logger.info(FMLCommonHandler.instance().getEffectiveSide().toString() + " " + text);
+	}
+	
+	public static void wailaCallback(IWailaRegistrar reg)
+	{
+		reg.registerBodyProvider(new WailaEssentiaEngineHandler(), TileEssentiaEngine.class);
 	}
 	
 	 @EventHandler
@@ -178,6 +187,8 @@ public class AdvThaum
 	     FMLCommonHandler.instance().bus().register(new ArcingDamageManager());
 	     
 	     ForgeChunkManager.setForcedChunkLoadingCallback(instance, new ChunkLoadingClass());
+	     
+	     FMLInterModComms.sendMessage("Waila", "register", this.getClass().getName() + ".wailaCallback");
 	    
      }
 	
