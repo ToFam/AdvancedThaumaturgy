@@ -9,8 +9,8 @@ tile.blockAltarDeployer.name=Altar Deployer
 tile.blockCreativeNode.name=Creative Node
 tile.blockCreativeNode.desc=Places a node that contains 100 of each|primal aspect, and never drains.|Creative Only
 
-tile.blockEssentiaengine.name=Essentia Engine
-tile.blockEssentiaengine.desc=Consumes various types of essentia|from nearby jars to produce energy.
+tile.blockEssentiaEngine.name=Essentia Engine
+tile.blockEssentiaEngine.desc=Consumes various types of essentia|to produce energy.
 
 tile.blockEtherealJar.name=Ethereal Jar
 tile.blockEtherealJar.desc=A slightly advanced version of the|Warded Jar, capable of holding 256 essentia.
