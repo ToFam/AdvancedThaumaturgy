@@ -7,12 +7,14 @@
   "mcversion": "${mcversion}",
   "url": "http://ixios.net/advthaum/",
   "updateUrl": "",
-  "authors": ["Lycaon (IGN: LycaonX)"],
+  "authorList": ["Lycaon (IGN: LycaonX)", "ToFam"],
   "credits": "Azanor, for Thaumcrft. Vazkii for inspiration. XanderGryphon, LordIllyohs for support. Le_Alchemist for proving that living beings can indeed be dumber than a rock.",
-  "logoFile": "",
+  "logoFile": "advthaumbanner.png",
   "screenshots": [],
+  "parent": "",
   "requiredMods": [ "Forge", "Thaumcraft" ],
-  "dependencies": [ "CoFHLib" ],
-  "useDependencyInformation": true
+  "dependencies": [ "Thaumcraft" ],
+  "dependants": [],
+  "useDependencyInformation": false
 }
 ]

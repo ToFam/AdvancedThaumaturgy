@@ -61,7 +61,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid=AdvThaum.MODID, version=AdvThaum.VERSION, name=AdvThaum.NAME, 
-	dependencies="required-after:Thaumcraft", acceptedMinecraftVersions=AdvThaum.MC_VERSION)
+	dependencies="required-after:Forge;required-after:Thaumcraft", acceptedMinecraftVersions=AdvThaum.MC_VERSION)
 public class AdvThaum
 {
 	public final static String MODID = "advthaum";
@@ -266,6 +266,8 @@ public class AdvThaum
 		 if (config.get("Feature Control", "add_permutatio_to_eggs", true).getBoolean(true))
 		 {
 			 AspectList list = ThaumcraftApiHelper.getObjectAspects(new ItemStack(Items.egg));
+			 if (list == null)
+				 list = new AspectList();
 			 if (!list.aspects.containsKey(Aspect.EXCHANGE))
 			 {
 				list.add(Aspect.EXCHANGE, 1); 
@@ -276,6 +278,8 @@ public class AdvThaum
 		 if (config.get("Feature Control", "add_exanimus_to_bones", true).getBoolean(true))
 		 {
 			 AspectList list = ThaumcraftApiHelper.getObjectAspects(new ItemStack(Items.bone));
+			 if (list == null)
+				 list = new AspectList();
 			 if (!list.aspects.containsKey(Aspect.UNDEAD))
 			 {
 				 list.add(Aspect.UNDEAD, 1);
