@@ -2,9 +2,8 @@ package net.ixios.advancedthaumaturgy.blocks;
 
 import java.util.List;
 
-import mcp.mobius.waila.api.IWailaBlock;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.ixios.advancedthaumaturgy.items.ItemMicrolith;
 import net.ixios.advancedthaumaturgy.items.TCItems;
@@ -20,7 +19,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import thaumcraft.api.ThaumcraftApi;
@@ -29,14 +27,9 @@ import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.common.config.ConfigResearch;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.common.registry.GameRegistry;
 
-@Optional.Interface(modid = BlockMicrolith.WAILA_MODID, iface = "mcp.mobius.waila.api.IWailaBlock", striprefs = true)
-public class BlockMicrolith extends BlockContainer implements IWailaBlock
+public class BlockMicrolith extends BlockContainer
 {
-	public static final String WAILA_MODID = "WailaAPI";
 	public static int renderID;
 	
     public BlockMicrolith(Material material)
@@ -222,43 +215,5 @@ public class BlockMicrolith extends BlockContainer implements IWailaBlock
 	{
 	    return 12;
 	}
-	
-	@Optional.Method(modid = WAILA_MODID)
-	@Override
-    public ItemStack getWailaStack(IWailaDataAccessor accessor,
-            IWailaConfigHandler config)
-    {
-	    // TODO Auto-generated method stub
-	    return null;
-    }
-
-	@Optional.Method(modid = WAILA_MODID)
-	@Override
-    public List<String> getWailaHead(ItemStack stack, List<String> currenttip, IWailaDataAccessor accessor,
-            IWailaConfigHandler config)
-    {
-		currenttip.clear();
-		MovingObjectPosition mop = accessor.getPosition();
-		currenttip.add(ItemMicrolith.getName(accessor.getWorld().getBlockMetadata(mop.blockX, mop.blockY, mop.blockZ)));
-	    return currenttip;
-    }
-
-	@Optional.Method(modid = WAILA_MODID)
-	@Override
-    public List<String> getWailaBody(ItemStack itemStack,
-            List<String> currenttip, IWailaDataAccessor accessor,
-            IWailaConfigHandler config)
-    {
-	    return currenttip;
-    }
-
-	@Optional.Method(modid = WAILA_MODID)
-	@Override
-    public List<String> getWailaTail(ItemStack itemStack,
-            List<String> currenttip, IWailaDataAccessor accessor,
-            IWailaConfigHandler config)
-    {
-	    return currenttip;
-    }
 	
 }
