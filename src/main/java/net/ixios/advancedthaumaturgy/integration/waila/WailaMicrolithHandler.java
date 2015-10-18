@@ -5,12 +5,11 @@ import java.util.List;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
-import net.ixios.advancedthaumaturgy.items.ItemMicrolith;
+import net.ixios.advancedthaumaturgy.AdvThaum;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 public class WailaMicrolithHandler implements IWailaDataProvider 
@@ -19,15 +18,13 @@ public class WailaMicrolithHandler implements IWailaDataProvider
 	@Override
 	public ItemStack getWailaStack(IWailaDataAccessor accessor, IWailaConfigHandler config) 
 	{
-		return null;
+		return new ItemStack(AdvThaum.Microlith, 1, accessor.getMetadata());
 	}
 
 	@Override
 	public List<String> getWailaHead(ItemStack itemStack, List<String> currenttip, 
 			IWailaDataAccessor accessor, IWailaConfigHandler config) 
 	{
-		MovingObjectPosition mop = accessor.getPosition();
-		currenttip.add(ItemMicrolith.getName(accessor.getWorld().getBlockMetadata(mop.blockX, mop.blockY, mop.blockZ)));
 	    return currenttip;
 	}
 

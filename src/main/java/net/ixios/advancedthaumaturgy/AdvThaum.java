@@ -17,7 +17,6 @@ import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
-import mcp.mobius.waila.api.IWailaRegistrar;
 import net.ixios.advancedthaumaturgy.blocks.BlockAltarDeployer;
 import net.ixios.advancedthaumaturgy.blocks.BlockCreativeNode;
 import net.ixios.advancedthaumaturgy.blocks.BlockEssentiaEngine;
@@ -27,8 +26,6 @@ import net.ixios.advancedthaumaturgy.blocks.BlockNodeModifier;
 import net.ixios.advancedthaumaturgy.blocks.BlockPlaceholder;
 import net.ixios.advancedthaumaturgy.blocks.BlockThaumicFertilizer;
 import net.ixios.advancedthaumaturgy.blocks.BlockThaumicVulcanizer;
-import net.ixios.advancedthaumaturgy.integration.waila.WailaEssentiaEngineHandler;
-import net.ixios.advancedthaumaturgy.integration.waila.WailaMicrolithHandler;
 import net.ixios.advancedthaumaturgy.items.ItemAeroSphere;
 import net.ixios.advancedthaumaturgy.items.ItemArcaneCrystal;
 import net.ixios.advancedthaumaturgy.items.ItemEndstoneChunk;
@@ -45,7 +42,6 @@ import net.ixios.advancedthaumaturgy.misc.ArcingDamageManager;
 import net.ixios.advancedthaumaturgy.misc.ChunkLoadingClass;
 import net.ixios.advancedthaumaturgy.network.PacketStartNodeModification;
 import net.ixios.advancedthaumaturgy.proxies.CommonProxy;
-import net.ixios.advancedthaumaturgy.tileentities.TileEssentiaEngine;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -117,12 +113,6 @@ public class AdvThaum
 	    logger.info(FMLCommonHandler.instance().getEffectiveSide().toString() + " " + text);
 	}
 	
-	public static void wailaCallback(IWailaRegistrar reg)
-	{
-		reg.registerBodyProvider(new WailaEssentiaEngineHandler(), TileEssentiaEngine.class);
-		reg.registerHeadProvider(new WailaMicrolithHandler(), BlockMicrolith.class);
-	}
-	
 	 @EventHandler
      public void preInit(FMLPreInitializationEvent event)
 	 {
@@ -189,7 +179,7 @@ public class AdvThaum
 	     
 	     ForgeChunkManager.setForcedChunkLoadingCallback(instance, new ChunkLoadingClass());
 	     
-	     FMLInterModComms.sendMessage("Waila", "register", this.getClass().getName() + ".wailaCallback");
+	     FMLInterModComms.sendMessage("Waila", "register", "net.ixios.advancedthaumaturgy.integration.waila.Waila.wailaCallback");
 	    
      }
 	
